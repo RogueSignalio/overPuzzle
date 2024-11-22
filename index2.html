@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="icon" href="assets/favicon.png">
+    <title>OverSlider by RogueSignal.io</title>
+    <link rel="stylesheet" href="css/over.css" id="page_style">
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.24.1/phaser.min.js" crossorigin="anonymous"></script>
+    --><!-- Phaser 3.5+ changed rotation behavior on particles!?!?!?  Need to find some answers /-->
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.85.0/phaser.min.js" crossorigin="anonymous"></script> 
+    <script src="overpuzzle/overpuzzle.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+<button id="controlz" class="control_icon" onclick="toggle_controls();">🠻🠻</button>
+<div id="controls" class="controls">
+  <button onClick="" class="toggle"><label for="bgt"><input type="checkbox" id="bgt" checked="true" onclick="toggle_bg();">🗔</label></button>
+  <button onClick="" class="toggle"><label for="logt"><input type="checkbox" id="logt" checked="true" onclick="toggle_logo()">🖾</label></button>
+<br>
+  <button onClick="" class="toggle"><label for="vol"><input type="checkbox" id="vol" checked="true" onclick="op.audio_toggle();">🕪</label></button>
+  <!-- <button onClick="op.stop()" class="toggle" style="color:red;">🛑</button> -->
+<br>
+  <button onClick="slider.startPuzzle('puzzle1',3,3)">Start</button><br> 
+  <button onClick="slider.nextRound()">Next</button><br> 
+</div>
+<p class="rrsyellow">OverSlider 0.2 by <a href="http://www.roguesignal.io" target="_BLANK_">RogueSignal.IO</a><p>
+<div id="logo" class="logo" style="opacity:0.8;">
+<!-- <img src="assets/RogueSignal_FullLogo.svg" style="width:350px;"/> -->
+<div id="overpuzzle" name="overpuzzle"></div>
+</div>
+
+<script>
+  var bg_vis = true
+  var logo_vis = true
+  var oplay;
+  var op;
+  var dir = 'overpuzzle/assets/'
+  var game;
+  var slider;
+  window.onload = function() {
+  const config = {
+      width: 800 ,
+      height: 620,
+      backgroundColor: '#002157',
+      parent: 'overpuzzle',
+      debug: true
+//        scene: [ OverSlider ],
+  };
+
+//    game = new Phaser.Game(config);
+    op = new OverPuzzle(config)
+    logo = document.getElementById('logo');
+    // setTimeout(function(){
+    // window.slider = game.scene.scenes[0];
+    // },1000)
+  };
+
+  function toggle_controls() {
+    let controls = document.getElementById('controls');
+    if (controls.style.visibility == "hidden" || controls.style.visibility == "") {
+      controls.style.visibility = "visible";
+    } else {
+      controls.style.visibility = "hidden";
+    }
+  }
+
+  function toggle_bg() {
+    if (bg_vis == true) { document.body.style.backgroundImage = 'none'; bg_vis = false; }
+    else { document.body.style.backgroundImage = "url('assets/roguesignal_bg.png')"; bg_vis = true; }
+  }
+
+  function toggle_logo() {
+    document.getElementById('logo').style.visibility = logo_vis ? "hidden" : "visible"
+    logo_vis = logo_vis ? false : true
+  }
+
+</script>
+</body>
