@@ -153,6 +153,12 @@
   ul {
     font-size: 14px;
   }
+  .overpuzzle {
+    display: grid;
+    place-items: center;
+      height: 420px; /* optional */
+  }  
+
   /* Works on Firefox */
   * {
     scrollbar-width: auto;

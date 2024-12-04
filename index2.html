@@ -9,7 +9,8 @@
     <link rel="stylesheet" href="css/over.css" id="page_style">
     <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.24.1/phaser.min.js" crossorigin="anonymous"></script>
     --><!-- Phaser 3.5+ changed rotation behavior on particles!?!?!?  Need to find some answers /-->
-     <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.85.0/phaser.min.js" crossorigin="anonymous"></script> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.85.0/phaser.min.js" crossorigin="anonymous"></script> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
     <script src="overpuzzle/overpuzzle.js" crossorigin="anonymous"></script>
 </head>
 
@@ -20,42 +21,104 @@
   <button onClick="" class="toggle"><label for="logt"><input type="checkbox" id="logt" checked="true" onclick="toggle_logo()">🖾</label></button>
 <br>
   <button onClick="" class="toggle"><label for="vol"><input type="checkbox" id="vol" checked="true" onclick="op.audio_toggle();">🕪</label></button>
-  <!-- <button onClick="op.stop()" class="toggle" style="color:red;">🛑</button> -->
+  <button onClick="op.stop()" class="toggle" style="color:red;">🛑</button>
 <br>
-  <button onClick="slider.startPuzzle('puzzle1',3,3)">Start</button><br> 
-  <button onClick="slider.nextRound()">Next</button><br> 
+  <button onClick="slide1_puzzle()">Slide1 Puzzle</button><br> 
+  <button onClick="code1_puzzle()">Code1 Puzzle</button><br> 
+  <button onClick="rotate2_puzzle()">Rotate Puzzle</button><br> 
+  <button onClick="rotate1_puzzle()">Rotate Yikes!</button><br> 
 </div>
-<p class="rrsyellow">OverSlider 0.2 by <a href="http://www.roguesignal.io" target="_BLANK_">RogueSignal.IO</a><p>
 <div id="logo" class="logo" style="opacity:0.8;">
-<!-- <img src="assets/RogueSignal_FullLogo.svg" style="width:350px;"/> -->
-<div id="overpuzzle" name="overpuzzle"></div>
+<p class="rsyellow">OverPuzzle 0.8 by <a href="http://www.roguesignal.io" target="_BLANK_">RogueSignal.IO</a><p>
+<img src="assets/RogueSignal_FullLogo.svg" style="width:350px;"/>
+</div>
+<div style="">
+<div id="overpuzzle" name="overpuzzle" class="overpuzzle"></div>
 </div>
 
 <script>
   var bg_vis = true
   var logo_vis = true
-  var oplay;
-  var op;
+  var op,logo
   var dir = 'overpuzzle/assets/'
-  var game;
   var slider;
-  window.onload = function() {
-  const config = {
-      width: 800 ,
-      height: 620,
-      backgroundColor: '#002157',
-      parent: 'overpuzzle',
-      debug: true
-//        scene: [ OverSlider ],
-  };
+  var puzzle_width = 312
+  var puzzle_height = 312
 
-//    game = new Phaser.Game(config);
-    op = new OverPuzzle(config)
+  window.onload = function() {
     logo = document.getElementById('logo');
-    // setTimeout(function(){
-    // window.slider = game.scene.scenes[0];
-    // },1000)
-  };
+    toggle_controls();
+
+    op = new OverPuzzle({
+        width: 360 ,
+        height: 360,
+        parent: 'overpuzzle',
+        debug: true,
+        background: '#000000',
+        transparent: true,      
+    })
+  }
+
+  function slide1_puzzle() {
+    op.add_puzzle('slide1', { 
+      type: 'slidepuzzle', 
+      backgrounds: [ 'background.jpg'], 
+      images: ['puzzle1.png'],
+      rows: 4,
+      columns: 4,
+      shuffle_speed: 50,
+      board_width: puzzle_width,
+      board_height: puzzle_height,
+      on_win: function() { alert('Won!') },
+    },function(puzzle) {
+      window.puzzle = puzzle;
+    })
+  }
+
+  function code1_puzzle() {
+    op.add_puzzle('code1', { 
+      type: 'codepuzzle', 
+      backgrounds: [ 'paper_back.png'], 
+      images: ['myrunes2.png'],
+      rows: 4,
+      columns: 4,
+      shuffle_speed: 0,
+      board_width: puzzle_width,
+      board_height: puzzle_height,
+    },function(puzzle) {
+      window.puzzle = puzzle;
+    })    
+  }
+
+  function rotate1_puzzle() {
+    op.add_puzzle('rotate1', { 
+      type: 'rotatepuzzle', 
+      backgrounds: [ 'spiralz.jpg'], 
+      images: ['tubes1.jpg'],
+      rows: 5,
+      columns: 5,
+      board_width: puzzle_width,
+      board_height: puzzle_height,
+      shuffle_speed: 200,
+    },function(puzzle) {
+      window.puzzle = puzzle;
+    })
+  }
+
+  function rotate2_puzzle() {
+    op.add_puzzle('rotate1', { 
+      type: 'rotatepuzzle', 
+      backgrounds: [ 'rotater_back.png'], 
+      images: ['rotater03.png'],
+      rows: 4,
+      columns: 4,
+      board_width: puzzle_width,
+      board_height: puzzle_height,
+      shuffle_speed: 200,
+    },function(puzzle) {
+      window.puzzle = puzzle;
+    })
+  }
 
   function toggle_controls() {
     let controls = document.getElementById('controls');

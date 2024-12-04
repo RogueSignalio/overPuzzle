@@ -1,115 +1,73 @@
-class Slider extends Phaser.Scene {
-  constructor (puzzle,master) {
-    this.master = master
-    var config = {
-      rows: 0,
-      columns: 0,
-      piece_width: 0,
-      piece_height: 0,
-      shuffles: 10,
-      shuffle_speed: 150, // 0 for instant shuffle
-      photos: [],
-      backgrounds: [],
-      image_path: this.master.config.image_path,
-      audio_path: this.master.config.audio_path,
-      auto_advance: true,
-      ...puzzle
-    }
-    var track = {
-      pieces: [],
-      spacer: null,
-      last_move: null,
-      slices: [],
-      interactive: true,
-    }
-    //  The speed at which the pieces slide, and the tween they use
-  }
-// this.slideSpeed = 300;
-// this.slideEase = 'power3';
-//        this.shuffleEase = 'power1';
-//    this.action = SlidingPuzzle.ALLOW_CLICK;
-
-  preload () {
-    this.load.setPath(this.config.asset_path);
-    this.config.backgrounds.forEach( function(x,i) { this.load.image('background' + i,x); } )
-    this.config.photos.forEach( function(x,i) { this.load.image('photos' + i,x); } )
-    // this.load.setPath('assets/games/sliding-puzzle/audio');
-    // this.load.audio('move', [ 'move.m4a', 'move.wav', 'move.ogg' ]);
-    // this.load.audio('win', [ 'win.m4a', 'win.wav', 'win.ogg' ]);
+class Slidepuzzle extends Imagepuzzle {
+  constructor(puzzle,overmaster) {
+    super(puzzle,overmaster);
   }
 
-  create () {
-    window.solve = () => {
-      this.nextRound();
-    };
-
-    this.startPuzzle('puzzle1', 3, 3);
+  start_puzzle(rows, columns) {
+    this.slice_puzzle(rows,columns)
+    this.pieces.postFX.addGlow("0x000000",5,0)
+    this.open_piece = this.pieces.getAt(this.pieces.length - 1);
+    this.open_piece.alpha = 0;
+    this.last_move = null;
+    this.shuffle_board();
   }
 
-  startPuzzle (key, rows, columns) {
-    this.key = key;
-    this.rows = rows;
-    this.columns = columns;
-    this.texture = this.textures.getFrame(this.key);
-    this.image_width  = this.texture.width;
-    this.image_height = this.texture.height;
-    this.piece_width  = this.image_width / this.rows;
-    this.piece_height = this.image_height / this.columns;
-    this.add.image(400, 300, 'background');
-//        this.add.image(512, 384, 'box-inside');
+  win_puzzle() {
+    const fxShadow = this.pieces.preFX.addShadow(0, 0, 0.06, 0.75, 0x000000, 4, 0.8);
+    this.open_piece.alpha = 1;
+    super.win_puzzle()
+  }
 
-    //  A Container to put the pieces in
-    if (this.pieces) {
-      this.pieces.removeAll(true);
-    }
-    else {
-      //  The position sets the top-left of the container for the pieces to expand down from
-      this.pieces = this.add.container(100, 10);
-    }
+  play_piece(piece) {
+    if (!this.interactive) { return; }
+    const spacer = this.open_piece;
+    const pr = piece.data.values.row
+    const pc = piece.data.values.column
+    const sr = spacer.data.values.row
+    const sc = spacer.data.values.column
+    let tx = piece.x
+    let ty = piece.y
+    let tsx = spacer.x
+    let tsy = spacer.y
 
-    //  An array to put the texture slices in
-    if (this.slices) {
-      this.slices.forEach(slice => slice.destroy());
-      this.slices = [];
-    }
+    if ((pr != sr) && (pc != sc)) { return }      
 
-    let i = 0;
-    //  Loop through the image and create a new Sprite for each piece of the puzzle.
-    for (let y = 0; y < this.columns; y++) {
-      for (let x = 0; x < this.rows; x++) {
-        //  remove old textures
-        let slice = this.textures.addDynamicTexture(`slice${i}`, this.piece_width, this.piece_height);
-        let orgx = 0 + (x / this.rows);
-        let orgy = 0 + (y / this.columns);
-
-        slice.stamp(key, null, 0, 0, { originX: orgx, orgY: orgy });
-
-        this.slices.push(slice);
-
-        let piece = this.add.image(x * this.piece_width, y * this.piece_height, `slice${i}`);
-        piece.setOrigin(0, 0);
-
-        //  The current row and column of the piece
-        //  Store the row and column the piece _should_ be in, when the puzzle is solved
-        piece.setData({
-          row: x,
-          column: y,
-          actual_row: x,
-          actual_column: y
-        });
-
-        this.piece.setInteractive();
-        this.piece.on('pointerdown', () => this.checkPiece(this.piece));
-        this.pieces.add(this.piece);
-        i++;
+    let swap = false
+    if (pr == sr) {
+      if ((pc - 1) == sc) {
+        swap = true
+        ty -= this.piece_height
+      }
+      else if ((pc + 1) == sc) {
+        swap = true
+        ty += this.piece_height
       }
     }
+    else if (pc == sc) {
+      if ((pr - 1) == sr) {
+        swap = true
+        tx -= this.piece_width
+      }
+      else if ((pr + 1) == sr) {
+        swap = true
+        tx += this.piece_width
+      }
+    }
+    if (swap == true) {
+      spacer.data.values.row = pr
+      spacer.data.values.column = pc
+      piece.data.values.row = sr
+      piece.data.values.column = sc
+      this.grid[pr][pc] = spacer
+      this.grid[sr][sc] = piece
 
-    this.empty = this.pieces.getAt(this.pieces.length - 1);
-    this.empty.alpha = 0;
-    this.last_move = null;
-
-//    this.shufflePieces();
+      console.log(spacer.x,spacer.y)
+      console.log(piece.x,piece.y)
+      spacer.x = piece.x;
+      spacer.y = piece.y;
+      console.log(tx, ty, this.config.move_speed)
+      this.slide_piece(piece, tx, ty, this.config.move_speed, this.check_board );
+    }
   }
 
 }
