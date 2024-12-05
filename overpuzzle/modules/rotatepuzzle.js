@@ -86,8 +86,23 @@ class Rotatepuzzle extends Imagepuzzle {
   play_piece(piece) {
     if (!this.interactive) { return; }
     this.interactive = false
-    this.rotate_piece(piece,this.config.shuffle_speed,()=>{ this.interactive = true; console.log(piece.angle) })
+    this.rotate_piece(piece,this.config.shuffle_speed,()=>{ this.interactive = true; console.log(piece.angle); this.check_board() })
+    
     return true
   }
 
+  // You probably need to override this method to check winning condition.
+  check_board() {
+    let check = true
+    for (let x = 0; x < this.config.rows; x++) {
+      for (let y = 0; y < this.config.columns; y++) {
+        if (this.grid[x][y].angle != 0) { check = false }
+      }
+    }
+    if (check == true) {
+      this.win_puzzle()
+    } else {
+      console.log('nope!')
+    }
+  }
 }

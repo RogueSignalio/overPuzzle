@@ -125,7 +125,7 @@ class OverPuzzle {
     this.scenes[config.key] = myscene
     this.current_scene = myscene
     this.engine.scene.add(config.key, myscene, true, {} );
-    this.to_front(10000)
+    this.to_front(90)
     if (this.counter == 0) {
 //      this.to_front()
 //        this._check_timer()

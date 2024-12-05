@@ -10,7 +10,7 @@
     <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.24.1/phaser.min.js" crossorigin="anonymous"></script>
     --><!-- Phaser 3.5+ changed rotation behavior on particles!?!?!?  Need to find some answers /-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.85.0/phaser.min.js" crossorigin="anonymous"></script> 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+    <script src="https://roguesignalio.github.io/overGrowl/over_growl.js" ></script>
     <script src="overpuzzle/overpuzzle.js" crossorigin="anonymous"></script>
 </head>
 
@@ -57,7 +57,9 @@
         background: '#000000',
         transparent: true,      
     })
+    op.growler = new OverGrowl({z_index:20000});
   }
+
 
   function slide1_puzzle() {
     op.add_puzzle('slide1', { 
@@ -69,7 +71,7 @@
       shuffle_speed: 50,
       board_width: puzzle_width,
       board_height: puzzle_height,
-      on_win: function() { alert('Won!') },
+      on_win: function() { op.growler.info("You won!"); },
     },function(puzzle) {
       window.puzzle = puzzle;
     })
@@ -85,6 +87,7 @@
       shuffle_speed: 0,
       board_width: puzzle_width,
       board_height: puzzle_height,
+      on_win: function() { op.growler.info("You won!"); },
     },function(puzzle) {
       window.puzzle = puzzle;
     })    
@@ -100,6 +103,7 @@
       board_width: puzzle_width,
       board_height: puzzle_height,
       shuffle_speed: 200,
+      on_win: function() { op.growler.info("You won!"); },
     },function(puzzle) {
       window.puzzle = puzzle;
     })
@@ -115,6 +119,7 @@
       board_width: puzzle_width,
       board_height: puzzle_height,
       shuffle_speed: 200,
+      on_win: function() { op.growler.info("You won!"); },
     },function(puzzle) {
       window.puzzle = puzzle;
     })
