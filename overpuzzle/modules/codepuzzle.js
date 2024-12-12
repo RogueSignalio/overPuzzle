@@ -9,7 +9,9 @@ class Codepuzzle extends Imagepuzzle {
     super(temp_config,overmaster);
     this.answer_length = this.config.answer_length
     this.multiples = this.config.multiples
+  }
 
+  init() {
     this.selected_answers = []
     this.selected_ids = []
     this.answer_ids = []

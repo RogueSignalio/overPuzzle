@@ -1,7 +1,9 @@
 class Puzzleaudio extends Phaser.Scene {
   constructor () {
     super('puzzle_sound')
+  }
 
+  init() {
     this.bank_sounds = {}
     this.sounds = {}
     this.volume_offset = {}
