@@ -2,6 +2,7 @@ class Imagepuzzle extends Phaser.Scene {
   constructor (puzzle,overmaster) {
     super(puzzle.key);
     this.overmaster = overmaster
+    this.key = puzzle.key
     this.config = {
       rows: 3,
       columns: 3,
@@ -15,22 +16,27 @@ class Imagepuzzle extends Phaser.Scene {
       backgrounds: [],
       image_path: this.overmaster.config.image_path,
       audio_path: this.overmaster.config.audio_path,
-      audio_files: [],
+      sounds: {},
       auto_advance: true,
       table_width: this.overmaster.config.width,
       table_height: this.overmaster.config.height,
       board_width: 500,
       board_height: 500,
-      on_check: function() { console.log('check!') }.bind(this),
+      game_height: this.overmaster.config.height,
+      game_width: this.overmaster.config.width,
+
+      // Callbacks
+      on_check: function() {  }.bind(this),
       on_win: function(p) { console.log('won!') }.bind(this),
-      on_move: function(p) { console.log('move!') }.bind(this),
-      on_move_audio: function(p) { console.log('move audio!') }.bind(this),
-      on_no_move_audio: function(p) { console.log('No move audio!') }.bind(this),
-      on_win_audio: function(p) { console.log('win audio!') }.bind(this),
-      on_start_audio: function(p) { console.log('start audio!') }.bind(this),
+      on_move: function(p) {  }.bind(this),
+
+      // Audio functions to override.
+      on_move_audio: function(p) { this.play_sound_unqiue('move',{ detune: 300 }) }.bind(this),
+      on_no_move_audio: function(p) { this.play_sound_unqiue('no_move',{ detune: 300 }) }.bind(this),
+      on_win_audio: function(p) { this.play_sound('win') }.bind(this),
+      on_start_audio: function(p) { this.play_sound('start') }.bind(this),
       ...puzzle
     }
-
     if (!this.config.shuffles) { this.config.shuffles = (this.config.rows * this.config.columns) * 2 }
     this.on_check = this.config.on_check
     this.on_win = this.config.on_win
@@ -39,11 +45,15 @@ class Imagepuzzle extends Phaser.Scene {
     this.on_no_move_audio = this.config.on_no_move_audio
     this.on_win_audio = this.config.on_win_audio
     this.on_start_audio = this.config.on_start_audio
+  }
+
+  init() {
     this.image_index = 0
     this.image_current = null
     this.background_index = 0
     this.background_current = null
     this.image_keys = []
+    this.audio_keys = []
     this.background_keys = []
     this.ids = []
     this.slices = null
@@ -61,7 +71,6 @@ class Imagepuzzle extends Phaser.Scene {
         this.grid[x][y] = null
       }
     }
-
   }
 
   // If you want to append the preload, call super.preload() first in your override.
@@ -75,20 +84,39 @@ class Imagepuzzle extends Phaser.Scene {
       this.image_keys.push(`${this.config.key}_puzzle` + i)
       this.load.image(`${this.config.key}_puzzle` + i,x); 
     }.bind(this) )
-    this.config.audio_files.forEach( function(x,akey) { 
-      this.audio_keys.push(akey)
-      this.load.audio(akey,x); 
-    }.bind(this) )
     this.image_current = this.image_keys[this.image_index]
     this.background_current = this.background_keys[this.background_index]
-    // this.load.setPath('assets/games/sliding-puzzle/audio');
+
+    this.load.setPath(this.config.audio_path);
+    Object.entries(this.config.sounds).forEach(([key, value]) => { 
+      this.load.audio(`${this.key}_${key}_snd`,value);
+    })
   }
 
   create () {
+    Object.entries(this.config.sounds).forEach(([key, value]) => { 
+      this.audio_keys.push(key)
+      this.audio_engine.add_sound(`${this.key}_${key}_snd`,this.key)
+    })
+    // this.events.on('destroy', function(){ console.log('end'); })
+    // this.events.on('stop', function(){ console.log('stop'); })
+
     window.solve = () => {
       this.nextRound();
     };
+    this.on_start_audio.call(this)
     this.start_puzzle(this.config.rows, this.config.columns);
+  }
+
+  play_sound(key,options={}) {
+    this.audio_engine.play_sound(`${this.key}_${key}_snd`,options)
+  }
+  play_sound_unqiue(key,options={}) {
+    this.audio_engine.play_sound_unique(`${this.key}_${key}_snd`,options)
+  }
+
+  stop_sounds() {
+    this.audio_engine.stop_bank(this.key)
   }
 
   set_next_puzzle() {
@@ -112,7 +140,6 @@ class Imagepuzzle extends Phaser.Scene {
     this.slice_puzzle(rows,columns)
     this.open_piece = this.pieces.getAt(this.pieces.length - 1);
     this.last_move = null;
-    this.on_start_audio.call(this)
     this.shuffle_board();
   }
 
@@ -131,7 +158,7 @@ class Imagepuzzle extends Phaser.Scene {
 
     this.piece_width  = this.image_width / this.rows;
     this.piece_height = this.image_height / this.columns;
-    let back = this.add.image(this.config.table_width/2, this.config.table_height/2, this.background_current);
+    let back = this.add.image(this.config.game_width/2, this.config.game_height/2, this.background_current);
     back.setDisplaySize(this.config.table_width,this.config.table_height)
     let xoffset = this.piece_width/2
     let yoffset = this.piece_height/2
@@ -143,8 +170,8 @@ class Imagepuzzle extends Phaser.Scene {
     else {
       //  The position sets the top-left of the container for the pieces to expand down from
       this.pieces = this.add.container(
-        (this.config.table_width - this.image_width)/2, 
-        (this.config.table_height - this.image_height)/2, 
+        (this.config.game_width - this.image_width)/2, 
+        (this.config.game_height - this.image_height)/2, 
       );
     }
 
@@ -262,12 +289,11 @@ class Imagepuzzle extends Phaser.Scene {
 
   // In general, you don't want to override this method.  Override 'play_piece'.
   move_piece(p) {
+    if (!this.interactive) { return; }
     let ret = this.play_piece(p)
-    // console.log(ret)
     if (ret == true) { this.on_move.call(this,p) }
-    if (ret == true) { this.on_move_audio.call(this,p) }
+    if (ret == true) { this.on_move_audio.call(this); }
     else { this.on_no_move_audio.call(this,p) }
-    // console.log(p)
     //  this.func_check_puzzle()
   }
 
@@ -290,24 +316,35 @@ class Imagepuzzle extends Phaser.Scene {
         check_ids.push(this.grid[x][y].data.values.id)
       }
     }    
-    console.log('Done?', done_ids, check_ids.join(','),(done_ids == check_ids.join(',')))
     if (done_ids == check_ids.join(',')) {
       this.win_puzzle()
+    } else {
+      console.log('Done?', done_ids, check_ids.join(','),(done_ids == check_ids.join(',')))      
     }
   }
 
   // You probably need to override this method.  It should return true on succes and false on failure,
   // so it knows to play a sound.
   play_piece(piece) {
-    if (!this.interactive) { return; }
     return true;
   }
 
   win_puzzle() {
     this.interactive = false;
-    console.log('You win!')
+    this.glow_puzzle()
     this.on_win.call(this)
     this.on_win_audio.call(this)
   }
 
+  glow_puzzle() {
+    this.pieces.postFX.addShine(0.55, 0.5, 7);
+    let glow = this.pieces.postFX.addGlow("0xffffAA",5,0);
+    this.tweens.add({
+        targets: glow,
+        outerStrength: 15,
+        yoyo: true,
+        loop: -1,
+        ease: 'sine.inout'
+    });
+  }
 }

@@ -1,9 +1,10 @@
 class Rotatepuzzle extends Imagepuzzle {
   constructor (puzzle,overmaster) {
-    super(puzzle,overmaster);
-    this.answers = []
-    this.answer = null
-    this.answer_length = 4
+    let temp_config = {
+      inc_angle: 90,
+      ...puzzle
+    }
+    super(temp_config,overmaster);
   }
 
   start_puzzle (rows, columns) {
@@ -17,9 +18,6 @@ class Rotatepuzzle extends Imagepuzzle {
         this.grid[x][y].dat.on = false        
       }
     }
-    // if (!this.answer) {
-    //   Phaser.Utils.Array.GetRandom()
-    // }
     this.last_move = null;
     setTimeout(function() { this.shuffle_board() }.bind(this),500);
   }
@@ -36,17 +34,19 @@ class Rotatepuzzle extends Imagepuzzle {
     let counter = 1;
     this.shuffles = this.config.rows * this.config.columns
 
+    let rotations = []
+    for (let rt = 1; rt <= (360/this.config.inc_angle);rt++) {
+      rotations.push(rt)
+    }
+    let posi = [1,-1]
     for (let x = 0; x < this.config.rows; x++) {
       for (let y = 0; y < this.config.columns; y++) {
-        let r = Phaser.Utils.Array.GetRandom([1,2,3,4])
+        let r = Phaser.Utils.Array.GetRandom(rotations)
         let piece = this.grid[x][y]
-        let new_angle = 0
-        if (r == 1) { new_angle = 270 }
-        else if (r == 2) { new_angle = 450 }
-        else if (r == 3) { new_angle = -270 }
-        else if (r == 4) { new_angle = 360 }
+        let new_angle = (this.config.inc_angle * r)  * (360/this.config.inc_angle - 1)
+        let p = Phaser.Utils.Array.GetRandom(posi)
         setTimeout(function() { 
-          this.rotate_piece_to(piece,new_angle * 2,this.config.shuffle_speed, function(){
+          this.rotate_piece_to(piece,new_angle * p,this.config.shuffle_speed, function(){
             this.shuffles--;
             if (this.shuffles < 1) { 
               this.start_play()
@@ -62,18 +62,19 @@ class Rotatepuzzle extends Imagepuzzle {
     const tween = this.tweens.add({
       targets: piece,
       angle: angle,
-      duration: speed * 2,
+      duration: speed * 8,
       ease: 'power3'
     });
     tween.on('complete',func_on_complete,this)
   }
 
   rotate_piece(piece,speed=this.config.move_speed,func_on_complete=()=>{}) {
-    let dest_angle = piece.angle
-    if (piece.angle == 0) { dest_angle = 90 }
-    else if (piece.angle == 90) { dest_angle = 180 }
-    else if (piece.angle == -180) { dest_angle = -90 }
-    else if (piece.angle == -90) { dest_angle= 0 }
+    let dest_angle = piece.angle + this.config.inc_angle //piece.angle
+
+    // if (piece.angle == 0) { dest_angle = 90 }
+    // else if (piece.angle == 90) { dest_angle = 180 }
+    // else if (piece.angle == -180) { dest_angle = -90 }
+    // else if (piece.angle == -90) { dest_angle= 0 }
     const tween = this.tweens.add({
       targets: piece,
       angle: dest_angle,

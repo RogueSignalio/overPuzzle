@@ -15,32 +15,29 @@ class OverPuzzle {
       image_path: './overpuzzle/assets/',
       audio_path: './overpuzzle/audio',
       modules_path: './overpuzzle/modules',
-      width: 800 ,
-      height: 620,
+      width: window.innerWidth,
+      height: window.innerHeight,
+      audio_engine: null,
       ...config
     }
 
     this.loaded = {}
     this.scenes = {}
     this.counter = 0
+    this.muted = false
     this.engine = engine
     if (this.engine == null) {
       this.engine = this.new_engine()
     }      
+    if (this.config.audio_engine == null) {
+      this.load_script('puzzleaudio',()=> {
+        this.audio_engine = new Puzzleaudio()
+        this.engine.scene.add('audio_engine', this.audio_engine, true, {} );
+      })
+    }
 
     if (puzzle != null) {
       add_puzzle(puzzle,this) 
-    }
-  }
-
-  // Add a new puzzle.
-  // TODO: disable auto run_scene by default.
-  add_puzzle(key,puzzle={}) {
-    op.stop_current_puzzle()
-    var type = puzzle.type
-    if (!this.loaded[type]) { this.load_script(type,()=>{ this.init_puzzle(key,type,puzzle); }) }
-    else {
-      this.init_puzzle(key,type,puzzle);
     }
   }
 
@@ -51,6 +48,7 @@ class OverPuzzle {
   stop_current_puzzle() {
     if (this.current_scene == null) { return }
     if (this.current_scene.scene.isActive) { 
+      this.current_scene.stop_sounds(this.current_scene.key)
       this.current_scene.scene.stop()
       this.current_scene.scene.destroy()
       delete this.scenes[this.current_scene.key]
@@ -60,10 +58,15 @@ class OverPuzzle {
 
   stop_puzzle(key) {
     if (this.scenes[key].isActive) { 
+      this.current_scene.stop_sounds(this.current_scene.key)
       this.scenes[key].scene.stop()
       this.scenes[key].scene.destroy()
       delete this.scenes[this.current_scene.key]
     }
+  }
+
+  audio_toggle() {
+    this.audio_engine.mute_toggle()
   }
 
   new_engine() {
@@ -112,6 +115,17 @@ class OverPuzzle {
     }
   }
 
+  // Add a new puzzle.
+  // TODO: disable auto run_scene by default.
+  add_puzzle(key,puzzle={}) {
+    op.stop_current_puzzle()
+    var type = puzzle.type
+    if (!this.loaded[type]) { this.load_script(type,()=>{ this.init_puzzle(key,type,puzzle); }) }
+    else {
+      this.init_puzzle(key,type,puzzle);
+    }
+  }
+
   init_puzzle(key,name,config={}) {
     var config = {
       key: `${key}_${this.counter}`,
@@ -122,14 +136,15 @@ class OverPuzzle {
     var cname = name[0].toUpperCase() + name.substr(1)
     this.config.debug && console.log("Run " + config.key, config)
     var myscene = eval(`new ${cname}(config , this)`)
+    myscene.audio_engine = this.audio_engine
     this.scenes[config.key] = myscene
     this.current_scene = myscene
     this.engine.scene.add(config.key, myscene, true, {} );
     this.to_front(90)
-    if (this.counter == 0) {
-//      this.to_front()
-//        this._check_timer()
-    }
+//     if (this.counter == 0) {
+// //      this.to_front()
+// //        this._check_timer()
+//     }
     this.counter++;
   }
 
@@ -141,4 +156,8 @@ class OverPuzzle {
     },300);
   }
 
+}
+
+function getRndInteger(min, max) {
+  return Math.floor(Math.random() * (max - min + 1) ) + min;
 }

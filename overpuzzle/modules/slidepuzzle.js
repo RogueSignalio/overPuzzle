@@ -13,7 +13,7 @@ class Slidepuzzle extends Imagepuzzle {
   }
 
   win_puzzle() {
-    const fxShadow = this.pieces.preFX.addShadow(0, 0, 0.06, 0.75, 0x000000, 4, 0.8);
+    //const fxShadow = this.pieces.preFX.addShadow(0, 0, 0.06, 0.75, 0x000000, 4, 0.8);
     this.open_piece.alpha = 1;
     super.win_puzzle()
   }
@@ -61,13 +61,14 @@ class Slidepuzzle extends Imagepuzzle {
       this.grid[pr][pc] = spacer
       this.grid[sr][sc] = piece
 
-      console.log(spacer.x,spacer.y)
-      console.log(piece.x,piece.y)
       spacer.x = piece.x;
       spacer.y = piece.y;
-      console.log(tx, ty, this.config.move_speed)
       this.slide_piece(piece, tx, ty, this.config.move_speed, this.check_board );
+      return true
+    } else {
+      return false
     }
+
   }
 
 }

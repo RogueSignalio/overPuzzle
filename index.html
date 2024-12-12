@@ -21,16 +21,35 @@
   <button onClick="" class="toggle"><label for="logt"><input type="checkbox" id="logt" checked="true" onclick="toggle_logo()">🖾</label></button>
 <br>
   <button onClick="" class="toggle"><label for="vol"><input type="checkbox" id="vol" checked="true" onclick="op.audio_toggle();">🕪</label></button>
-  <button onClick="op.stop()" class="toggle" style="color:red;">🛑</button>
+  <button onClick="stop()" class="toggle" style="color:red;">🛑</button>
 <br>
   <button onClick="slide1_puzzle()">Slide1 Puzzle</button><br> 
+  <button onClick="slide2_puzzle()">Slide2 Puzzle</button><br> 
   <button onClick="code1_puzzle()">Code1 Puzzle</button><br> 
+  <button onClick="code2_puzzle()">Code2 Puzzle</button><br> 
   <button onClick="rotate2_puzzle()">Rotate Puzzle</button><br> 
   <button onClick="rotate1_puzzle()">Rotate Yikes!</button><br> 
 </div>
 <div id="logo" class="logo" style="opacity:0.8;">
-<p class="rsyellow">OverPuzzle 0.8 by <a href="http://www.roguesignal.io" target="_BLANK_">RogueSignal.IO</a><p>
+<p class="rsyellow">OverPuzzle 0.9 by <a href="http://www.roguesignal.io" target="_BLANK_">RogueSignal.IO</a><p>
 <img src="assets/RogueSignal_FullLogo.svg" style="width:350px;"/>
+<p>
+<ul id="details" class="details">
+  <li> OverPuzzle provides a way to build some quick image based puzzle games.
+  <li> Using callbacks, can be integrated with any client or server side app.
+  <li> Submit moves or solutions to server to trigger backend checking/winning behavior.
+  <li> Uses plugin architecture
+  <li> Built on lexible game glasses, making it easy to build new puzzle types on.
+  <li> Provides simple audio integration and control.
+  <li> Simple to use in any Javascript or Web page.
+  <li> Makes available full power of PhaserJS scenes.
+  <li> Instant intergration with overPlay's audio engine.
+  <li> Works with Phaser-3.55 to 3.85
+  <li> See code & <a href="https://github.com/roguesignalio/overPuzzle" target="_BLANK_" id="readme">Git Project</a> for more.
+  <li> Audio sourced from:
+      <a href="http://pixabay.com" target="_BLANK_">Pixabay</a>
+  <li> Images generated with Microsoft Bing 'Image Creator'
+<ul>
 </div>
 <div style="">
 <div id="overpuzzle" name="overpuzzle" class="overpuzzle"></div>
@@ -50,31 +69,65 @@
     toggle_controls();
 
     op = new OverPuzzle({
-        width: 360 ,
-        height: 360,
+        width: 624 ,
+        height: 540,
         parent: 'overpuzzle',
         debug: true,
         background: '#000000',
         transparent: true,      
     })
     op.growler = new OverGrowl({z_index:20000});
+
   }
 
 
   function slide1_puzzle() {
     op.add_puzzle('slide1', { 
       type: 'slidepuzzle', 
-      backgrounds: [ 'background.jpg'], 
-      images: ['puzzle1.png'],
-      rows: 4,
-      columns: 4,
+      backgrounds: [ 'myslideback7.jpg'], 
+      images: ['myslide2.jpg'],
+      rows: 3,
+      columns: 3,
       shuffle_speed: 50,
       board_width: puzzle_width,
       board_height: puzzle_height,
-      on_win: function() { op.growler.info("You won!"); },
+      sounds: {
+        move: 'slidemove1.mp3',
+        start: 'slidestart1.mp3',
+        win: 'slidewon1.mp3',
+        no_move: 'slidenomove1.mp3',
+      },
+      on_win: ()=> { op.growler.success("You won!"); },
+    },(puzzle) => {
+      window.puzzle = puzzle;
+    })
+    logo_off()
+  }
+
+  function slide2_puzzle() {
+    op.add_puzzle('slide1', { 
+      type: 'slidepuzzle', 
+      backgrounds: [ 'myslideback10.jpg'], 
+      images: ['myslide5.jpg'],
+      rows: 3,
+      columns: 4,
+      shuffle_speed: 25,
+      shuffles: 80,
+      board_width: 420,
+      board_height: 420,
+      table_width: 480,
+      table_height: 480,
+      sounds: {
+        move: 'slidemove2.mp3',
+        start: 'slidestart2.mp3',
+        win: 'slidewon2.mp3',
+        no_move: 'slidenomove1.mp3',
+      },
+      on_win: ()=> { op.growler.success("You won!"); },
     },function(puzzle) {
       window.puzzle = puzzle;
     })
+    logo_off()
   }
 
   function code1_puzzle() {
@@ -85,28 +138,72 @@
       rows: 4,
       columns: 4,
       shuffle_speed: 0,
+      answer_length: 4,
       board_width: puzzle_width,
       board_height: puzzle_height,
+      table_width: 360,
+      table_height: 360,
+      sounds: {
+        move: 'codemove1.mp3',
+        start: 'codestart1.mp3',
+        win: 'codewin1.mp3',
+        no_move: 'codenomove1.mp3',
+      },
       on_win: function() { op.growler.info("You won!"); },
     },function(puzzle) {
       window.puzzle = puzzle;
     })    
+    logo_off()
+  }
+
+  function code2_puzzle() {
+    op.add_puzzle('code1', { 
+      type: 'codepuzzle', 
+      backgrounds: [ 'codeback2.png'], 
+      images: ['stonecode1.jpg'],
+      rows: 3,
+      columns: 3,
+      shuffle_speed: 0,
+      multiples: 2,
+      board_width: puzzle_width,
+      board_height: puzzle_height,
+      table_width: 460,
+      table_height: 460,
+      sounds: {
+        move: 'codemove4.mp3',
+        start: 'codestart2.mp3',
+        win: 'codewin2.mp3',
+        no_move: 'codenomove2.mp3',
+      },
+      on_win: function() { op.growler.alert("You won!"); },
+    },function(puzzle) {
+      window.puzzle = puzzle;
+    })    
+    logo_off()
   }
 
   function rotate1_puzzle() {
     op.add_puzzle('rotate1', { 
       type: 'rotatepuzzle', 
-      backgrounds: [ 'spiralz.jpg'], 
-      images: ['tubes1.jpg'],
+      backgrounds: [ 'myrotate1.jpg'], 
+      images: ['myrotate1.jpg'],
       rows: 5,
       columns: 5,
-      board_width: puzzle_width,
-      board_height: puzzle_height,
+      board_width: 450,
+      board_height: 450,
       shuffle_speed: 200,
-      on_win: function() { op.growler.info("You won!"); },
+      table_width: 500,
+      table_height: 500,
+      sounds: {
+        move: 'spinmove1.mp3',
+        start: 'spinstart1.mp3',
+        win: 'spinwin1.mp3',
+      },    
+      on_win: function() { op.growler.error("You won!"); },
     },function(puzzle) {
       window.puzzle = puzzle;
     })
+    logo_off()
   }
 
   function rotate2_puzzle() {
@@ -116,13 +213,27 @@
       images: ['rotater03.png'],
       rows: 4,
       columns: 4,
-      board_width: puzzle_width,
-      board_height: puzzle_height,
+      board_width: puzzle_width * 1.5,
+      board_height: puzzle_height * 1.5,
+      inc_angle: 45,
       shuffle_speed: 200,
-      on_win: function() { op.growler.info("You won!"); },
+      table_width: puzzle_width * 1.5,
+      table_height: puzzle_height * 1.5,
+      sounds: {
+        move: 'spinmove4.mp3',
+        start: 'spinstart3.mp3',
+        win: 'spinwin2.mp3',
+      },    
+      on_win: function() { op.growler.alert("You won!!!!!! Awesome, right?"); },
     },function(puzzle) {
       window.puzzle = puzzle;
     })
+    logo_off()
+  }
+
+  function stop() {
+    op.stop()
+    logo_on()
   }
 
   function toggle_controls() {
@@ -142,6 +253,17 @@
   function toggle_logo() {
     document.getElementById('logo').style.visibility = logo_vis ? "hidden" : "visible"
     logo_vis = logo_vis ? false : true
+  }
+
+  function logo_off() {
+    document.getElementById('logo').style.visibility = "hidden"
+    logo_vis = false
+    document.getElementById('logt').checked = false 
+  }
+  function logo_on() {
+    document.getElementById('logo').style.visibility = "visible"
+    logo_vis = true
+    document.getElementById('logt').checked = true   
   }
 
 </script>
