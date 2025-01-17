@@ -10,7 +10,7 @@
     <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.24.1/phaser.min.js" crossorigin="anonymous"></script>
     --><!-- Phaser 3.5+ changed rotation behavior on particles!?!?!?  Need to find some answers /-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.85.0/phaser.min.js" crossorigin="anonymous"></script> 
-    <script src="https://roguesignalio.github.io/overGrowl/over_growl.js" ></script>
+    <script src="https://cdn.jsdelivr.net/gh/RogueSignalio/overGrowl@v1.1/over_growl.min.js" ></script>
     <script src="overpuzzle/overpuzzle.js" crossorigin="anonymous"></script>
 </head>
 
@@ -23,15 +23,20 @@
   <button onClick="" class="toggle"><label for="vol"><input type="checkbox" id="vol" checked="true" onclick="op.audio_toggle();">🕪</label></button>
   <button onClick="stop()" class="toggle" style="color:red;">🛑</button>
 <br>
-  <button onClick="slide1_puzzle()">Slide1 Puzzle</button><br> 
-  <button onClick="slide2_puzzle()">Slide2 Puzzle</button><br> 
-  <button onClick="code1_puzzle()">Code1 Puzzle</button><br> 
-  <button onClick="code2_puzzle()">Code2 Puzzle</button><br> 
-  <button onClick="rotate2_puzzle()">Rotate Puzzle</button><br> 
-  <button onClick="rotate1_puzzle()">Rotate Yikes!</button><br> 
+  <button onClick="slide1_puzzle()">Slide1</button><br> 
+  <button onClick="slide2_puzzle()">Slide2</button><br> 
+  <button onClick="code1_puzzle()">Code1</button><br> 
+  <button onClick="code2_puzzle()">Code2</button><br> 
+  <button onClick="code3_puzzle()">Code3</button><br> 
+  <button onClick="code4_puzzle()">Code4</button><br> 
+  <button onClick="rotate2_puzzle()">Rotate 45</button><br> 
+  <button onClick="rotate1_puzzle()">Rotate</button><br> 
+  <button onClick="swap1_puzzle()">Swap</button><br> 
+  <button onClick="scramble_example()">Scramble It!</button><br> 
+  <button onClick="code5_puzzle()">ExternalCode</button><br> 
 </div>
-<div id="logo" class="logo" style="opacity:0.8;">
-<p class="rsyellow">OverPuzzle 0.9 by <a href="http://www.roguesignal.io" target="_BLANK_">RogueSignal.IO</a><p>
+<div id="logo" class="logo" style="opacity:0.8;z-index:9999;">
+<p class="rsyellow">OverPuzzle 0.92 by <a href="http://www.roguesignal.io" target="_BLANK_">RogueSignal.IO</a> | <a href="https://github.com/roguesignalio/overPuzzle" target="_BLANK_" id="readme">Git Project</a></p>
 <img src="assets/RogueSignal_FullLogo.svg" style="width:350px;"/>
 <p>
 <ul id="details" class="details">
@@ -42,19 +47,17 @@
   <li> Built on lexible game glasses, making it easy to build new puzzle types on.
   <li> Provides simple audio integration and control.
   <li> Simple to use in any Javascript or Web page.
-  <li> Makes available full power of PhaserJS scenes.
-  <li> Instant intergration with overPlay's audio engine.
-  <li> Works with Phaser-3.55 to 3.85
-  <li> See code & <a href="https://github.com/roguesignalio/overPuzzle" target="_BLANK_" id="readme">Git Project</a> for more.
-  <li> Audio sourced from:
-      <a href="http://pixabay.com" target="_BLANK_">Pixabay</a>
-  <li> Images generated with Microsoft Bing 'Image Creator'
+  <li> Uses and makes available full power of <strong>PhaserJS</strong> scenes. (PhaserJS 3.55 to 3.85 tested)
+  <li> Instant intergration with <strong><a href="https://github.com/RogueSignalio/overGrowl" target="_BLANK_">OverSound</a></strong> by <a href="http://www.roguesignal.io" target="_BLANK_">RogueSignal.IO</a>
+  <li> Demo uses  <strong><a href="https://github.com/RogueSignalio/overGrowl" target="_BLANK_">OverGrowl</a></strong> by <a href="http://www.roguesignal.io" target="_BLANK_">RogueSignal.IO</a>
+  <li> Audio sourced from: <a href="http://pixabay.com" target="_BLANK_">Pixabay</a>
+  <li> Images generated with Microsoft Bing 'Image Creator'  
 <ul>
 </div>
-<div style="">
+<!-- <div style="">
 <div id="overpuzzle" name="overpuzzle" class="overpuzzle"></div>
 </div>
-
+ -->
 <script>
   var bg_vis = true
   var logo_vis = true
@@ -69,28 +72,105 @@
     toggle_controls();
 
     op = new OverPuzzle({
-        width: 624 ,
-        height: 540,
-        parent: 'overpuzzle',
-        debug: true,
-        background: '#000000',
+        width: 700 ,
+        height: 700,
+//        background: '0xFF0000',
         transparent: true,      
     })
-    op.growler = new OverGrowl({z_index:20000});
+    // op.growler = new OverGrowl({z_index:20000});
+    op.growler = new OverGrowl({
+      public: 'growler2',
+      z_index:20000, unique: true, close_button: false, duration: 4000, fade: 500, inline:false,
+      offset_x: 0,
+      css:`
+          #growler2-parent{
+          grid-row-gap: 1px;
+          opacity: 1;
+            // background-color: #00000077;
+            border-radius: 15px;
+            left: 10px;
+            width: 300px;
+          }
+      `
+    });
+    op.growler.add_type('thinking',{},`
+      border-color: rgb(60, 60, 80);
+      background-color: #000000;
+      color: #DDDDDD;
+    `,`
+      width: 30px;
+      height: 30px;
+      background-image: url('./assets/overgrowl-gear.png');
+      background-size: cover;      
+    `)
 
   }
 
+  function cleanup() {
+    // op.growler.clearGrowls() 
+    op.growler.clearGrowls() 
+    logo_off()
+  }
+  function show_info(info) {
+    setTimeout(() => { op.growler.thinking(info,{ duration: 0, close_button: true }) },1000)
+  }
+
+  function swap1_puzzle() {
+    cleanup()
+    op.add_puzzle('swap1', { 
+      type: 'swappuzzle', 
+      backgrounds: [ 'tabletop.png'], 
+      images: ['marbleboard1.png'],
+      rows: 5,
+      columns: 5,
+      shuffles: 300,
+      shuffle_speed: 0,
+      // open_piece: [2,2],
+      board_width: 300,
+      board_height: 300,
+      table_width: 400,
+      table_height: 400,
+      solve_ids: [
+        ['b','b','r','b','b'],
+        ['b','p','y','p','b'],
+        ['r','y','r','y','r'],
+        ['g','p','y','p','g'],
+        ['g','g','r','g','g'],        
+      ],
+      sounds: {
+        move: 'marblemove2.mp3',
+        start: 'swapstart1.mp3',
+        win: 'swapwon1.mp3',
+        no_move: 'slidenomove1.mp3',
+      },
+      on_win: ()=> { op.growler.success("You won!"); },
+    },function() {
+      op.growler.system(`<ul>
+<li> Diagonals don't count.
+<li> Red always touches a yellow.
+<li> Blue and Green never touch yellow.
+<li> Purple and red never touch.
+<li> The sky never touches the grass.
+      </ul>`,{ duration: 0, close_button: true });
+    })
+    show_info("<ul><li>Swaps consecutive pieces.<li>Turn an image into non-unqiue pieces.<li>Uses a non-unique answer set (ex., all blue are interchangeable).<li>Requires caller to provide hints to solve.<li>Post puzzle hook (provides hints).</ul>");
+  }
 
   function slide1_puzzle() {
+    cleanup()
     op.add_puzzle('slide1', { 
       type: 'slidepuzzle', 
       backgrounds: [ 'myslideback7.jpg'], 
       images: ['myslide2.jpg'],
       rows: 3,
       columns: 3,
-      shuffle_speed: 50,
+      shuffle_speed: 80,
+      shuffles: 30,
+      open_piece: [2,2],
       board_width: puzzle_width,
       board_height: puzzle_height,
+      table_width: 500,
+      table_height: 500,
       sounds: {
         move: 'slidemove1.mp3',
         start: 'slidestart1.mp3',
@@ -98,20 +178,20 @@
         no_move: 'slidenomove1.mp3',
       },
       on_win: ()=> { op.growler.success("You won!"); },
-    },(puzzle) => {
-      window.puzzle = puzzle;
     })
-    logo_off()
+    show_info("<ul><li>Standard slide puzzle<li>Oversized background<li>Visible shuffle<li>Custom open piece.</ul>")
   }
 
   function slide2_puzzle() {
+    cleanup()
     op.add_puzzle('slide1', { 
       type: 'slidepuzzle', 
-      backgrounds: [ 'myslideback10.jpg'], 
+      backgrounds: [ 'myslideback10.jpg'],
+      background_tint: '0xBB8866', 
       images: ['myslide5.jpg'],
       rows: 3,
       columns: 4,
-      shuffle_speed: 25,
+      shuffle_speed: 0,
       shuffles: 80,
       board_width: 420,
       board_height: 420,
@@ -124,21 +204,21 @@
         no_move: 'slidenomove1.mp3',
       },
       on_win: ()=> { op.growler.success("You won!"); },
-    },function(puzzle) {
-      window.puzzle = puzzle;
     })
-    logo_off()
+    show_info("<ul><li>Background tinted<li>Table and Board sizes<li>Invisible shuffle<li>Uneven piece size ratio</ul>")
   }
 
   function code1_puzzle() {
+    cleanup()
     op.add_puzzle('code1', { 
       type: 'codepuzzle', 
       backgrounds: [ 'paper_back.png'], 
       images: ['myrunes2.png'],
       rows: 4,
       columns: 4,
-      shuffle_speed: 0,
+//      shuffle_speed: 0,
       answer_length: 4,
+      shuffles: 0,
       board_width: puzzle_width,
       board_height: puzzle_height,
       table_width: 360,
@@ -150,14 +230,15 @@
         no_move: 'codenomove1.mp3',
       },
       on_win: function() { op.growler.info("You won!"); },
-    },function(puzzle) {
-      window.puzzle = puzzle;
+    },function() {
+      op.growler.system('Solution is: ' + this.answer_coords,{ duration: 0, close_button: true });
     })    
-    logo_off()
+    show_info("<ul><li>Answer length = 4<li>No shuffle<li>No duplicate selection<li>Post puzzle hook (provides solution).</ul>")
   }
 
   function code2_puzzle() {
-    op.add_puzzle('code1', { 
+    cleanup()
+    op.add_puzzle('code2', { 
       type: 'codepuzzle', 
       backgrounds: [ 'codeback2.png'], 
       images: ['stonecode1.jpg'],
@@ -169,6 +250,7 @@
       board_height: puzzle_height,
       table_width: 460,
       table_height: 460,
+      answer_length: 6,
       sounds: {
         move: 'codemove4.mp3',
         start: 'codestart2.mp3',
@@ -176,37 +258,171 @@
         no_move: 'codenomove2.mp3',
       },
       on_win: function() { op.growler.alert("You won!"); },
-    },function(puzzle) {
-      window.puzzle = puzzle;
+    },function() {
+      op.growler.system('Solution is: ' + this.answer_coords , { duration: 0, close_button: true });
     })    
-    logo_off()
+    show_info("<ul><li>Answer length = 6<li>Shuffles pieces<li>Duplicate selections<li>Post puzzle hook (provides solution).</ul>");
+  }
+
+  function code3_puzzle() {
+    cleanup()
+    op.add_puzzle('code3', { 
+      type: 'codepuzzle', 
+      backgrounds: [ 'metal_panel.png'], 
+      images: ['keypad1.png'],
+      rows: 4,
+      columns: 3,
+      shuffles: 0,
+      shuffle_speed: 0,
+      multiples: 4,
+      disabled_pieces: [[3,0]],
+      function_pieces: [[3,2,function(){ this.reset_selected() }]],
+      board_width: 410,
+      board_height: 360,
+      table_width: 530,
+      table_height: 480,
+      answers: [Phaser.Utils.Array.GetRandom([...Array(10).keys()]),3,3,Phaser.Utils.Array.GetRandom([...Array(10).keys()])],
+      piece_ids: [
+        ['1','2','3'],
+        ['4','5','6'],
+        ['7','8','9'],
+        ['b','0','c'],
+      ],
+      // table_width: 700,
+      // table_height: 700,
+      answer_length: 4,
+      sounds: {
+        move: 'keybeep2.mp3',
+        start: 'startbeep.mp3',
+        win: 'winbeep1.mp3',
+        no_move: 'codenomove2.mp3',
+      },
+      on_win: function() { op.growler.alert("You won!"); },
+    },function() {
+      op.growler.system('Solution is: ' + this.answer_ids.join(',') , { duration: 0, close_button: true });
+    })    
+    show_info("<ul><li>Custom IDs to match # layout.<li>Answer set from caller (always has 33 in middle).<li>Disables lower left.<li>Lower right has custom hook.<li>Duplicate selections<li>Post puzzle hook (provides solution).</ul>");
+  }
+
+  function code4_puzzle() {
+    cleanup()
+    op.add_puzzle('code3', { 
+      type: 'keypadpuzzle', 
+      backgrounds: [ 'metal_panel.png'], 
+      images: ['keypad2.png'],
+      rows: 4,
+      columns: 3,
+      shuffles: 0,
+      shuffle_speed: 0,
+      function_pieces: [
+        [3,0,function(){ this.play_sound_unqiue('backspace',{ detune: 100 }); this.unselect_last(); }],
+        [3,2,function(){ this.play_sound_unqiue('clear'); this.reset_selected(); }]
+      ],
+      board_width: 360,
+      board_height: 310,
+      table_width: 430,
+      table_height: 480,
+      answer_length: 5,
+      show_selected: false,
+      no_audio_keys: ['b','c'],
+      show_panel: function(){ this.panel_add('code_display',this.config.board_width, 50, 
+                                              '#00FF00','[Enter Code]',15) },
+      piece_ids: [
+        ['1','2','3'],
+        ['4','5','6'],
+        ['7','8','9'],
+        ['b','0','c'],
+      ],
+      sounds: {
+        move: 'keybeep2.mp3',
+        start: 'startbeep.mp3',
+        win: 'winbeep2.mp3',
+        no_move: 'codenomove2.mp3',
+        backspace: 'backbeep2.mp3',
+        clear: 'clearbeep.mp3',
+      },
+      on_win: function() { op.growler.alert("You won!"); },
+    },function() {
+      op.growler.system('Solution is: ' + this.answer_ids.join(',') , { duration: 0, close_button: true });
+    })    
+    show_info("<ul><li>Answer length = 5<li>Custom IDs to match # layout.<li>Lower right and left have custom behavior.<li>Duplicate selections<li>Selects not highlighted or labeled.<li>Post puzzle hook (provides solution).<li>Enables built-in selection display panel.</ul>");
+  }
+
+  function code5_puzzle() {
+    cleanup()
+    let answers = [1,2,3,4].map((i)=>{ return Math.floor(Math.random() * 10) })
+    let answer_hash = md5(answers.join(','))
+    op.add_puzzle('code3', { 
+      type: 'keypadpuzzle', 
+      backgrounds: [ 'metal_panel.png'], 
+      images: ['keypad2.png'],
+      rows: 4,
+      columns: 3,
+      shuffles: 0,
+      shuffle_speed: 0,
+      multiples: 2,
+      function_pieces: [
+        [3,0,function(){ this.play_sound_unqiue('backspace',{ detune: 100 }); this.unselect_last(); }],
+        [3,2,function(){ this.play_sound_unqiue('clear'); this.reset_selected(); }]
+      ],
+      board_width: 360,
+      board_height: 310,
+      table_width: 430,
+      table_height: 480,
+      answer_length: 5,
+      answer_hash: md5(answers.join(',')),
+      show_selected: false,
+      no_audio_keys: ['b','c'],
+      show_panel: function(){ this.panel_add('code_display',this.config.board_width, 50, 
+                                              '#00FF00','[Enter Code]',15) },
+      piece_ids: [
+        ['1','2','3'],
+        ['4','5','6'],
+        ['7','8','9'],
+        ['b','0','c'],
+      ],
+      sounds: {
+        move: 'keybeep2.mp3',
+        start: 'startbeep.mp3',
+        win: 'winbeep2.mp3',
+        no_move: 'codenomove2.mp3',
+        backspace: 'backbeep2.mp3',
+        clear: 'clearbeep.mp3',
+      },
+      on_win: function() { op.growler.alert("You won!"); },
+    },function() {
+      op.growler.system(`Solution is: ${answers.join(',')}<br>
+      Hashed Answer: ${answer_hash}`, { duration: 0, close_button: true });
+    })
+    show_info("<code>This puzzle takes an MD5 hash of the answer ids joined by ',' as the answer.  This is the most secure way to provide a pre-generated answer for a code puzzle from an external source (ex., server side).</code>");
   }
 
   function rotate1_puzzle() {
+    cleanup()
     op.add_puzzle('rotate1', { 
       type: 'rotatepuzzle', 
       backgrounds: [ 'myrotate1.jpg'], 
       images: ['myrotate1.jpg'],
       rows: 5,
       columns: 5,
+      shuffle_speed: 200,
       board_width: 450,
       board_height: 450,
-      shuffle_speed: 200,
       table_width: 500,
       table_height: 500,
+      background_tint: '0x6666BB',
       sounds: {
         move: 'spinmove1.mp3',
         start: 'spinstart1.mp3',
         win: 'spinwin1.mp3',
       },    
       on_win: function() { op.growler.error("You won!"); },
-    },function(puzzle) {
-      window.puzzle = puzzle;
     })
-    logo_off()
+    show_info("<ul><li>Standard rotate puzzle<li>Background tinted</ul>");
   }
 
   function rotate2_puzzle() {
+    cleanup()
     op.add_puzzle('rotate1', { 
       type: 'rotatepuzzle', 
       backgrounds: [ 'rotater_back.png'], 
@@ -225,13 +441,29 @@
         win: 'spinwin2.mp3',
       },    
       on_win: function() { op.growler.alert("You won!!!!!! Awesome, right?"); },
-    },function(puzzle) {
-      window.puzzle = puzzle;
     })
-    logo_off()
+    show_info("<ul><li>Rotate puzzle w/custom increments (45 degrees)</ul>");
+  }
+
+  function scramble_example() {
+    cleanup()
+    op.add_puzzle('se', { 
+      type: 'scrambleexample', 
+      images: ['myslide2.jpg'],
+      rows: 3,
+      columns: 3,
+      shuffle_speed: 0,
+      open_piece: [2,2],
+      board_width: 700,
+      board_height: 700,
+      table_width: 700,
+      table_height: 700,
+    })
+    show_info("<ul><li>Standard slide puzzle<li>Oversized background<li>Visible shuffle<li>Custom open piece.</ul>")
   }
 
   function stop() {
+    cleanup()
     op.stop()
     logo_on()
   }

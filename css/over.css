@@ -4,6 +4,7 @@
     --mydarkblue: rgba(21, 38, 44, 0.8);
     --myblue: rgba(33, 61, 69, 0.8);
     --mylightblue: rgba(103, 121, 199, 0.8);
+    --mylightyellow: rgba(255, 179, 100, 0.8);
     --myorange: rgba( 210, 61, 41, 0.8);
     --myyellow: rgba(255, 159, 71, 0.8);
   }
@@ -28,7 +29,7 @@
     top: 0px;
     position:absolute;
     text-align: center;
-    z-index:10001;
+    z-index:10201;
 
   }
   #controls {
@@ -51,7 +52,7 @@
     border-radius: 0px 0px 0px 10px;
     background-color: var(--mydarkblue);
     overflow-y:auto;
-    z-index:10001;
+    z-index:10101;
     padding-left: 10px;
   }
   button {
@@ -147,17 +148,17 @@
     padding-right:3px;
     border-radius:10px;"
     cursor: none;
-    color: var(--mylightblue)
+    color: var(--mylightyellow)
   }
   .rsyellow { color: var(--myyellow); } 
   ul {
     font-size: 14px;
   }
   .overpuzzle {
-    display: grid;
+/*    display: grid;
     place-items: center;
-      height: 420px; /* optional */
-  }  
+    height: 420px; /* optional */
+*/  }  
 
   /* Works on Firefox */
   * {

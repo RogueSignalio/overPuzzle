@@ -6,25 +6,31 @@ class Slidepuzzle extends Imagepuzzle {
   start_puzzle(rows, columns) {
     this.slice_puzzle(rows,columns)
     this.pieces.postFX.addGlow("0x000000",5,0)
-    this.open_piece = this.pieces.getAt(this.pieces.length - 1);
+    if (this.config.open_piece == null) {
+      this.open_piece = this.pieces.getAt(this.pieces.length - 1);
+    } else {
+      this.open_piece = this.grid[this.config.open_piece[0]][this.config.open_piece[1]]
+    }
     this.open_piece.alpha = 0;
     this.last_move = null;
     this.shuffle_board();
+    //this.start_play() - shuffle / swap carry the duty of start_play.
   }
 
   win_puzzle() {
-    //const fxShadow = this.pieces.preFX.addShadow(0, 0, 0.06, 0.75, 0x000000, 4, 0.8);
     this.open_piece.alpha = 1;
     super.win_puzzle()
   }
 
   play_piece(piece) {
+    //console.log(piece.dat.id,piece.dat.row + 1,piece.dat.column + 1)
+
     if (!this.interactive) { return; }
     const spacer = this.open_piece;
-    const pr = piece.data.values.row
-    const pc = piece.data.values.column
-    const sr = spacer.data.values.row
-    const sc = spacer.data.values.column
+    const pr = piece.dat.row
+    const pc = piece.dat.column
+    const sr = spacer.dat.row
+    const sc = spacer.dat.column
     let tx = piece.x
     let ty = piece.y
     let tsx = spacer.x
@@ -36,28 +42,28 @@ class Slidepuzzle extends Imagepuzzle {
     if (pr == sr) {
       if ((pc - 1) == sc) {
         swap = true
-        ty -= this.piece_height
+        tx -= this.piece_width
       }
       else if ((pc + 1) == sc) {
         swap = true
-        ty += this.piece_height
+        tx += this.piece_width
       }
     }
     else if (pc == sc) {
       if ((pr - 1) == sr) {
         swap = true
-        tx -= this.piece_width
+        ty -= this.piece_height
       }
       else if ((pr + 1) == sr) {
         swap = true
-        tx += this.piece_width
+        ty += this.piece_height
       }
     }
     if (swap == true) {
-      spacer.data.values.row = pr
-      spacer.data.values.column = pc
-      piece.data.values.row = sr
-      piece.data.values.column = sc
+      spacer.dat.row = pr
+      spacer.dat.column = pc
+      piece.dat.row = sr
+      piece.dat.column = sc
       this.grid[pr][pc] = spacer
       this.grid[sr][sc] = piece
 

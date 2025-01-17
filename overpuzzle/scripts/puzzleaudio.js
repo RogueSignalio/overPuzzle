@@ -12,7 +12,7 @@ class Puzzleaudio extends Phaser.Scene {
   }
 
   add_sound(key,bank=null,options={}) {
-    console.log('reg audio: ' + key)
+    //console.log('reg audio: ' + key)
     if (this.sounds[key]) { return }
 
     if (!this.bank_sounds[bank]) {
@@ -44,12 +44,14 @@ class Puzzleaudio extends Phaser.Scene {
   }
 
   stop_sound(key) {
+    if (!this.sounds[key]) { return }
     let a = this.sounds[key].sound
 //    this.sound.stop(key)
     a.stop();
   }
 
   stop_bank(bank) {
+    if (!this.bank_sounds[bank]) { return }
     Object.entries(this.bank_sounds[bank]).forEach(([key, value]) => { 
       this.stop_sound(key)
     })

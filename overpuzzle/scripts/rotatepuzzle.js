@@ -22,13 +22,6 @@ class Rotatepuzzle extends Imagepuzzle {
     setTimeout(function() { this.shuffle_board() }.bind(this),500);
   }
 
-  start_play() {
-    this.last_move = null;
-    this.interactive = true
-    this.paused = false
-    console.log('start!')
-  }
-
   shuffle_board() {
     const moves = [];
     let counter = 1;
@@ -55,7 +48,8 @@ class Rotatepuzzle extends Imagepuzzle {
         }.bind(this),counter * 50);
         counter++;
       }
-    }   
+    }
+
   }
 
   rotate_piece_to(piece,angle,speed,func_on_complete=()=>{}) {
@@ -71,10 +65,6 @@ class Rotatepuzzle extends Imagepuzzle {
   rotate_piece(piece,speed=this.config.move_speed,func_on_complete=()=>{}) {
     let dest_angle = piece.angle + this.config.inc_angle //piece.angle
 
-    // if (piece.angle == 0) { dest_angle = 90 }
-    // else if (piece.angle == 90) { dest_angle = 180 }
-    // else if (piece.angle == -180) { dest_angle = -90 }
-    // else if (piece.angle == -90) { dest_angle= 0 }
     const tween = this.tweens.add({
       targets: piece,
       angle: dest_angle,
@@ -87,12 +77,14 @@ class Rotatepuzzle extends Imagepuzzle {
   play_piece(piece) {
     if (!this.interactive) { return; }
     this.interactive = false
-    this.rotate_piece(piece,this.config.shuffle_speed,()=>{ this.interactive = true; console.log(piece.angle); this.check_board() })
+    this.rotate_piece(piece,this.config.shuffle_speed,()=>{ 
+      this.interactive = true; 
+      this.check_board() 
+    })
     
     return true
   }
 
-  // You probably need to override this method to check winning condition.
   check_board() {
     let check = true
     for (let x = 0; x < this.config.rows; x++) {
@@ -102,8 +94,6 @@ class Rotatepuzzle extends Imagepuzzle {
     }
     if (check == true) {
       this.win_puzzle()
-    } else {
-      console.log('nope!')
     }
   }
 }
