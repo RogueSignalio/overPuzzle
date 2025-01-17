@@ -231,7 +231,7 @@
       },
       on_win: function() { op.growler.info("You won!"); },
     },function() {
-      op.growler.system('Solution is: ' + this.answer_coords,{ duration: 0, close_button: true });
+      op.growler.system('Solution is (row,column): ' + this.answer_coords,{ duration: 0, close_button: true });
     })    
     show_info("<ul><li>Answer length = 4<li>No shuffle<li>No duplicate selection<li>Post puzzle hook (provides solution).</ul>")
   }
@@ -259,7 +259,7 @@
       },
       on_win: function() { op.growler.alert("You won!"); },
     },function() {
-      op.growler.system('Solution is: ' + this.answer_coords , { duration: 0, close_button: true });
+      op.growler.system('Solution is (row,column): ' + this.answer_coords , { duration: 0, close_button: true });
     })    
     show_info("<ul><li>Answer length = 6<li>Shuffles pieces<li>Duplicate selections<li>Post puzzle hook (provides solution).</ul>");
   }
