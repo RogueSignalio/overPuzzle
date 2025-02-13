@@ -1,3 +1,12 @@
+//===========================================================================
+// OverPuzzle
+//---------------------------------------------------------------------------
+// Authors: BlackRogue01 (dallen@trammelventures.com)
+// Copyright: RogueSignal.io, wwww.roguesignal.io, 2024
+//---------------------------------------------------------------------------
+// 
+//  See README.txt
+//===========================================================================
 class Imagepuzzle extends Phaser.Scene {
   constructor (puzzle,overmaster) {
     super(puzzle.key);
@@ -66,6 +75,7 @@ class Imagepuzzle extends Phaser.Scene {
     this.image_current = null
     this.background_index = 0
     this.background_current = null
+    this.tiles_keys = []
     this.image_keys = []
     this.audio_keys = []
     this.background_keys = []
@@ -94,6 +104,10 @@ class Imagepuzzle extends Phaser.Scene {
       this.background_keys.push(`${this.config.key}_background` + i)
       this.load.image(`${this.config.key}_background` + i,x); 
     }.bind(this) )
+    // this.config.tiles.forEach( function(x,i) { 
+    //   this.tiles_keys.push(`${this.config.key}_tiles` + i)
+    //   this.load.image(`${this.config.key}_tiles` + i,x); 
+    // }.bind(this) )
     if (this.config.images_base64) {
       this.config.images_base64.forEach( function(x,i) { 
         this.image_keys.push(`${this.config.key}_puzzle` + i)
@@ -163,6 +177,57 @@ class Imagepuzzle extends Phaser.Scene {
     this.open_piece = this.pieces.getAt(this.pieces.length - 1);
     this.last_move = null;
     this.shuffle_board();
+  }
+
+  layout_puzzle(layout={}) {
+    if (!this.piece_ids) { this.piece_ids = [] }
+    this.grid = []
+
+    if (this.background_current) {
+      this.background = this.add.image(this.config.game_width/2, this.config.game_height/2, this.background_current);
+      this.background.setDisplaySize(this.config.table_width,this.config.table_height)
+      if (this.config.background_tint) { this.background.setTint(this.config.background_tint) }
+    }
+
+    this.pieces = this.add.container(
+      (this.config.game_width - this.config.table_width)/2, 
+      (this.config.game_height - this.config.table_width)/2, 
+    );
+
+    Object.entries(layout).forEach(function(p,i) {
+      let x = p[1][0]
+      let y = p[1][1]
+      let piece = this.add.image(x, y, `${this.config.key}_puzzle` + p[0]);
+      if (p[1][2] != undefined) { piece.angle = p[1][2]}
+      if (!this.piece_ids[x]) { this.piece_ids[x] = [] }
+      if (!this.grid[x]) { this.grid[x] = [] }
+      let id = this.piece_ids[x][y]
+
+      piece.dat = {
+        row: x,
+        column: y,
+        source_row: x,
+        source_column: y,
+        id: id,
+        solve_id: id,
+        overfx: {},
+        on: false,
+        count: 0,
+        positions: [],
+        decrementing: true,
+      }
+      if (this.config.solve_ids) {
+        piece.dat.solve_id = this.config.solve_ids[x][y]
+      }
+
+      piece.setInteractive();
+      piece.input.cursor = 'pointer';
+      piece.on('pointerdown', () => this.move_piece(piece));
+      this.pieces.add(piece);
+      this.grid[x][y] = piece
+      this.ids.push(id)
+      i++;
+    }.bind(this))
   }
 
   slice_puzzle (rows, columns) {

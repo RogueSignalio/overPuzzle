@@ -8,7 +8,6 @@
 // 
 //  See README.txt
 //===========================================================================
-
 class OverPuzzle {
   constructor (config={},puzzle=null,engine=null) {
     this.plugins = {
@@ -17,6 +16,8 @@ class OverPuzzle {
       rotatepuzzle: 'imagepuzzle',
       swappuzzle: 'codepuzzle',
       keypadpuzzle: 'codepuzzle',
+      wordhunt: 'codepuzzle',
+      selectorpuzzle: 'codepuzzle',
       scrambleexample: 'imagepuzzle',
       imagepuzzle: null
     }
@@ -184,4 +185,13 @@ class OverPuzzle {
 
 function getRndInteger(min, max) {
   return Math.floor(Math.random() * (max - min + 1) ) + min;
+}
+
+function random_item(collection) {
+    if (Array.isArray(collection)) {
+      return collection[Math.floor(Math.random()*collection.length)];
+    } else {
+      let oe = Object.entries(collection)
+      return oe[Math.floor(Math.random()*oe.length)][1];      
+    }
 }

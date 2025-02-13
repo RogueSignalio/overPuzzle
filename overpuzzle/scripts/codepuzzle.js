@@ -1,3 +1,12 @@
+//===========================================================================
+// OverPuzzle
+//---------------------------------------------------------------------------
+// Authors: BlackRogue01 (dallen@trammelventures.com)
+// Copyright: RogueSignal.io, wwww.roguesignal.io, 2024
+//---------------------------------------------------------------------------
+// 
+//  See README.txt
+//===========================================================================
 class Codepuzzle extends Imagepuzzle {
   constructor (puzzle,overmaster) {
     let temp_config = {
@@ -127,6 +136,8 @@ class Codepuzzle extends Imagepuzzle {
   }
 
   select_piece(piece) {
+console.log('s1')
+
     piece.dat.count++
     piece.dat.positions.push(this.selected_answers.length + 1)
     piece.dat.decrementing = false
@@ -197,12 +208,14 @@ class Codepuzzle extends Imagepuzzle {
 
   play_piece(piece) {
     if (!this.interactive) { return; }
+console.log('1')
     //console.log(piece.dat.id,piece.dat.row + 1,piece.dat.column + 1)
     if (piece.dat.disabled) { return; }
     if (piece.dat.on_click) {
       piece.dat.on_click.call(this)
       return true;
     }
+console.log('2')
 
     // Unclicked piece
     if (piece.dat.on == false) {

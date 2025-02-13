@@ -1,4 +1,12 @@
-// keypadpuzzle.js
+//===========================================================================
+// OverPuzzle
+//---------------------------------------------------------------------------
+// Authors: BlackRogue01 (dallen@trammelventures.com)
+// Copyright: RogueSignal.io, wwww.roguesignal.io, 2024
+//---------------------------------------------------------------------------
+// 
+//  See README.txt
+//===========================================================================
 class Keypadpuzzle extends Codepuzzle {
   constructor (puzzle,overmaster) {
     let temp_config = {

@@ -1,4 +1,12 @@
-// TBD
+//===========================================================================
+// OverPuzzle
+//---------------------------------------------------------------------------
+// Authors: BlackRogue01 (dallen@trammelventures.com)
+// Copyright: RogueSignal.io, wwww.roguesignal.io, 2024
+//---------------------------------------------------------------------------
+// 
+//  See README.txt
+//===========================================================================
 class Swappuzzle extends Codepuzzle {
   constructor (puzzle,overmaster) {
     let temp_config = {
@@ -6,10 +14,6 @@ class Swappuzzle extends Codepuzzle {
       ...puzzle
     }
     super(temp_config,overmaster);
-  }
-
-  init() {
-    super.init()
   }
 
   start_puzzle (rows, columns) {

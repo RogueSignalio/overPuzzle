@@ -24,7 +24,8 @@
   <button onClick="stop()" class="toggle" style="color:red;">🛑</button>
 <br>
   <button onClick="slide1_puzzle()">Slide1</button><br> 
-  <button onClick="slide2_puzzle()">Slide2</button><br> 
+  <button onClick="slide3_puzzle()">Slide2</button><br> 
+  <!-- <button onClick="slide2_puzzle()">Slide2</button><br>  -->
   <button onClick="code1_puzzle()">Code1</button><br> 
   <button onClick="code2_puzzle()">Code2</button><br> 
   <button onClick="code3_puzzle()">Code3</button><br> 
@@ -32,6 +33,8 @@
   <button onClick="rotate2_puzzle()">Rotate 45</button><br> 
   <button onClick="rotate1_puzzle()">Rotate</button><br> 
   <button onClick="swap1_puzzle()">Swap</button><br> 
+  <button onClick="word_hunt()">Word Hunt</button><br> 
+  <button onClick="selector_one()">SelectIt</button><br> 
   <button onClick="scramble_example()">Scramble It!</button><br> 
   <button onClick="code5_puzzle()">ExternalCode</button><br> 
 </div>
@@ -198,6 +201,32 @@
       board_height: 420,
       table_width: 480,
       table_height: 480,
+      sounds: {
+        move: 'slidemove2.mp3',
+        start: 'slidestart2.mp3',
+        win: 'slidewon2.mp3',
+        no_move: 'slidenomove1.mp3',
+      },
+      on_win: ()=> { op.growler.success("You won!"); },
+    })
+    show_info("<ul><li>Background tinted<li>Table and Board sizes<li>Invisible shuffle<li>Uneven piece size ratio</ul>")
+  }
+
+  function slide3_puzzle() {
+    cleanup()
+    op.add_puzzle('slide1', { 
+      type: 'slidepuzzle', 
+      backgrounds: [ 'myslideback8.jpg'],
+      background_tint: '0xAABB88', 
+      images: ['qrslide.png'],
+      rows: 4,
+      columns: 5,
+      shuffle_speed: 0,
+      shuffles: 80,
+      board_width: 420,
+      board_height: 420,
+      table_width: 500,
+      table_height: 500,
       sounds: {
         move: 'slidemove2.mp3',
         start: 'slidestart2.mp3',
@@ -459,6 +488,57 @@
       board_height: 700,
       table_width: 700,
       table_height: 700,
+    })
+    show_info("<ul><li>Standard slide puzzle<li>Oversized background<li>Visible shuffle<li>Custom open piece.</ul>")
+  }
+
+  function word_hunt() {
+    cleanup()
+    op.add_puzzle('word_hunt', { 
+      type: 'wordhunt', 
+      backgrounds: [ 'pic_frame01.png'], 
+      images: ['stone_tiles_8x8.png'],
+      rows: 8,
+      columns: 8,
+      shuffle_speed: 0,
+      // shuffles: 30,
+      open_piece: [2,2],
+      board_width: puzzle_width,
+      board_height: puzzle_height,
+      table_width: 400,
+      table_height: 400,
+      sounds: {
+        move: 'slidemove1.mp3',
+        start: 'slidestart1.mp3',
+        win: 'slidewon1.mp3',
+        no_move: 'slidenomove1.mp3',
+      },
+      on_win: ()=> { op.growler.success("You won!"); },
+    })
+    show_info("<ul><li>Standard slide puzzle<li>Oversized background<li>Visible shuffle<li>Custom open piece.</ul>")
+  }
+
+  function selector_one() {
+    cleanup()
+    op.add_puzzle('selector_one', { 
+      type: 'selectorpuzzle', 
+      backgrounds: [ 'tabletop2.png'], 
+      images: ['revolver_small.png','envelope_small.png','key_small.png'],
+      layout: { 0: [110,100], 1: [290,230,60], 2: [90,280,-25] },
+      answer_length: 2,
+      // shuffles: 30,
+      open_piece: [2,2],
+      board_width: puzzle_width,
+      board_height: puzzle_height,
+      table_width: 400,
+      table_height: 400,
+      sounds: {
+        move: 'slidemove1.mp3',
+        start: 'slidestart1.mp3',
+        win: 'slidewon1.mp3',
+        no_move: 'slidenomove1.mp3',
+      },
+      on_win: ()=> { op.growler.success("You won!"); },
     })
     show_info("<ul><li>Standard slide puzzle<li>Oversized background<li>Visible shuffle<li>Custom open piece.</ul>")
   }

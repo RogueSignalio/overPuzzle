@@ -1,5 +1,16 @@
+// TO BE DONE TBD
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
+//===========================================================================
+// OverPuzzle
+//---------------------------------------------------------------------------
+// Authors: BlackRogue01 (dallen@trammelventures.com)
+// Copyright: RogueSignal.io, wwww.roguesignal.io, 2024
+//---------------------------------------------------------------------------
+// 
+//  See README.txt
+//===========================================================================
+
 class Combopuzzle extends Imagepuzzle {
-class Swappuzzle extends Codepuzzle {
   constructor (puzzle,overmaster) {
     let temp_config = {
       back_image: null,

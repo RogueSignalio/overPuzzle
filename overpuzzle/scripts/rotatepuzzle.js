@@ -1,3 +1,12 @@
+//===========================================================================
+// OverPuzzle
+//---------------------------------------------------------------------------
+// Authors: BlackRogue01 (dallen@trammelventures.com)
+// Copyright: RogueSignal.io, wwww.roguesignal.io, 2024
+//---------------------------------------------------------------------------
+// 
+//  See README.txt
+//===========================================================================
 class Rotatepuzzle extends Imagepuzzle {
   constructor (puzzle,overmaster) {
     let temp_config = {

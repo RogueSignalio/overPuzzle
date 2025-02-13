@@ -1,3 +1,12 @@
+//===========================================================================
+// OverPuzzle
+//---------------------------------------------------------------------------
+// Authors: BlackRogue01 (dallen@trammelventures.com)
+// Copyright: RogueSignal.io, wwww.roguesignal.io, 2024
+//---------------------------------------------------------------------------
+// 
+//  See README.txt
+//===========================================================================
 class Slidepuzzle extends Imagepuzzle {
   constructor(puzzle,overmaster) {
     super(puzzle,overmaster);
@@ -14,7 +23,6 @@ class Slidepuzzle extends Imagepuzzle {
     this.open_piece.alpha = 0;
     this.last_move = null;
     this.shuffle_board();
-    //this.start_play() - shuffle / swap carry the duty of start_play.
   }
 
   win_puzzle() {
@@ -23,8 +31,6 @@ class Slidepuzzle extends Imagepuzzle {
   }
 
   play_piece(piece) {
-    //console.log(piece.dat.id,piece.dat.row + 1,piece.dat.column + 1)
-
     if (!this.interactive) { return; }
     const spacer = this.open_piece;
     const pr = piece.dat.row
