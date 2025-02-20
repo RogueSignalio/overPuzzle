@@ -39,6 +39,15 @@ class Wordhunt extends Codepuzzle {
     })
   }
 
+  check_board() {
+    let solve_ids = this.selected_answers.map((i)=>{ return i.dat.solve_id })
+    let check_ids = this.check_merge(solve_ids)
+    console.log('Done?', this.answer, check_ids,(this.answer == check_ids))
+    // if (this.answer == check_ids) {
+    //   this.win_puzzle()
+    // }
+  }
+
   start_puzzle (rows, columns) {
     this.slice_puzzle(rows,columns)
     this.pieces.postFX.addGlow("0x000000",5,0)

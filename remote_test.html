@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="icon" href="assets/favicon.png">
+    <title>OverPuzzle by RogueSignal.io</title>
+    <link rel="stylesheet" href="css/over.css" id="page_style">
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.24.1/phaser.min.js" crossorigin="anonymous"></script>
+    -->
+    <!-- Phaser 3.5+ changed rotation behavior on particles!?!?!?  Need to find some answers /-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.85.0/phaser.min.js" crossorigin="anonymous"></script> 
+    <script src="https://cdn.jsdelivr.net/gh/RogueSignalio/overGrowl@v1.1/over_growl.min.js" ></script>
+    <script src="https://cdn.jsdelivr.net/gh/RogueSignalio/overPuzzle/overpuzzle/overpuzzle.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+<button id="controlz" class="control_icon" onclick="toggle_controls();">🠻🠻</button>
+<div id="controls" class="controls">
+  <button onClick="" class="toggle"><label for="bgt"><input type="checkbox" id="bgt" checked="true" onclick="toggle_bg();">🗔</label></button>
+  <button onClick="" class="toggle"><label for="logt"><input type="checkbox" id="logt" checked="true" onclick="toggle_logo()">🖾</label></button>
+<br>
+  <button onClick="" class="toggle"><label for="vol"><input type="checkbox" id="vol" checked="true" onclick="op.audio_toggle();">🕪</label></button>
+  <button onClick="stop()" class="toggle" style="color:red;">🛑</button>
+<br>
+  <button onClick="slide1_puzzle()">Slide1</button><br> 
+  <button onClick="code4_puzzle()">Code4</button><br> 
+  <button onClick="rotate1_puzzle()">Rotate</button><br> 
+</div>
+<div id="logo" class="logo" style="opacity:0.8;z-index:9999;">
+<p class="rsyellow">OverPuzzle by <a href="http://www.roguesignal.io" target="_BLANK_">RogueSignal.IO</a> | <a href="https://github.com/roguesignalio/overPuzzle" target="_BLANK_" id="readme">Git Project</a></p>
+<img src="assets/RogueSignal_FullLogo.svg" style="width:350px;"/>
+<p>
+<ul id="details" class="details">
+<ul>
+</div>
+<!-- <div style="">
+<div id="overpuzzle" name="overpuzzle" class="overpuzzle"></div>
+</div>
+ -->
+<script>
+  var bg_vis = true
+  var logo_vis = true
+  var op,logo
+  var dir = 'overpuzzle/assets/'
+  var slider;
+  var puzzle_width = 312
+  var puzzle_height = 312
+
+  window.onload = function() {
+    logo = document.getElementById('logo');
+    toggle_controls();
+
+    op = new OverPuzzle({
+        width: 700 ,
+        height: 700,
+//        background: '0xFF0000',
+        transparent: true,
+        modules_path: 'https://cdn.jsdelivr.net/gh/RogueSignalio/overPuzzle/overpuzzle/scripts/'      
+    })
+    // op.growler = new OverGrowl({z_index:20000});
+    op.growler = new OverGrowl({
+      public: 'growler2',
+      z_index:20000, unique: true, close_button: false, duration: 4000, fade: 500, inline:false,
+      offset_x: 0,
+      css:`
+          #growler2-parent{
+          grid-row-gap: 1px;
+          opacity: 1;
+            // background-color: #00000077;
+            border-radius: 15px;
+            left: 10px;
+            width: 300px;
+          }
+      `
+    });
+    op.growler.add_type('thinking',{},`
+      border-color: rgb(60, 60, 80);
+      background-color: #000000;
+      color: #DDDDDD;
+    `,`
+      width: 30px;
+      height: 30px;
+      background-image: url('./assets/overgrowl-gear.png');
+      background-size: cover;      
+    `)
+
+  }
+
+  function cleanup() {
+    // op.growler.clearGrowls() 
+    op.growler.clearGrowls() 
+    logo_off()
+  }
+  function show_info(info) {
+    setTimeout(() => { op.growler.thinking(info,{ duration: 0, close_button: true }) },1000)
+  }
+
+  function slide1_puzzle() {
+    cleanup()
+    op.add_puzzle('slide1', { 
+      type: 'slidepuzzle', 
+      // backgrounds: [ 'myslideback7.jpg'], 
+      // images: ['myslide2.jpg'],
+      backgrounds: [ 'https://roguesignalio.github.io/overPuzzle/overpuzzle/assets/myslideback7.jpg'], 
+      images: ['https://roguesignalio.github.io/overPuzzle/overpuzzle/assets/myslide2.jpg'],
+      rows: 3,
+      columns: 3,
+      shuffle_speed: 80,
+      shuffles: 30,
+      open_piece: [2,2],
+      board_width: puzzle_width,
+      board_height: puzzle_height,
+      table_width: 500,
+      table_height: 500,
+      sounds: {
+        move: 'https://roguesignalio.github.io/overPuzzle/overpuzzle/audio/slidemove1.mp3',
+        start: 'slidestart1.mp3',
+        win: 'slidewon1.mp3',
+        no_move: 'https://roguesignalio.github.io/overPuzzle/overpuzzle/audio/slidenomove1.mp3',
+      },
+      on_win: ()=> { op.growler.success("You won!"); },
+    })
+    show_info("<ul><li>Standard slide puzzle<li>Oversized background<li>Visible shuffle<li>Custom open piece.</ul>")
+  }
+
+  function code4_puzzle() {
+    cleanup()
+    op.add_puzzle('code3', { 
+      type: 'keypadpuzzle', 
+      backgrounds: [ 'metal_panel.png'], 
+      images: ['keypad2.png'],
+      rows: 4,
+      columns: 3,
+      shuffles: 0,
+      shuffle_speed: 0,
+      function_pieces: [
+        [3,0,function(){ this.play_sound_unqiue('backspace',{ detune: 100 }); this.unselect_last(); }],
+        [3,2,function(){ this.play_sound_unqiue('clear'); this.reset_selected(); }]
+      ],
+      board_width: 360,
+      board_height: 310,
+      table_width: 430,
+      table_height: 480,
+      answer_length: 5,
+      show_selected: false,
+      no_audio_keys: ['b','c'],
+      show_panel: function(){ this.panel_add('code_display',this.config.board_width, 50, 
+                                              '#00FF00','[Enter Code]',15) },
+      piece_ids: [
+        ['1','2','3'],
+        ['4','5','6'],
+        ['7','8','9'],
+        ['b','0','c'],
+      ],
+      sounds: {
+        move: 'keybeep2.mp3',
+        start: 'startbeep.mp3',
+        win: 'winbeep2.mp3',
+        no_move: 'codenomove2.mp3',
+        backspace: 'backbeep2.mp3',
+        clear: 'clearbeep.mp3',
+      },
+      on_win: function() { op.growler.alert("You won!"); },
+    },function() {
+      op.growler.system('Solution is: ' + this.answer_ids.join(',') , { duration: 0, close_button: true });
+    })    
+    show_info("<ul><li>Answer length = 5<li>Custom IDs to match # layout.<li>Lower right and left have custom behavior.<li>Duplicate selections<li>Selects not highlighted or labeled.<li>Post puzzle hook (provides solution).<li>Enables built-in selection display panel.</ul>");
+  }
+
+
+  function rotate1_puzzle() {
+    cleanup()
+    op.add_puzzle('rotate1', { 
+      type: 'rotatepuzzle', 
+      backgrounds: [ 'myrotate1.jpg'], 
+      images: ['myrotate1.jpg'],
+      rows: 5,
+      columns: 5,
+      shuffle_speed: 200,
+      board_width: 450,
+      board_height: 450,
+      table_width: 500,
+      table_height: 500,
+      background_tint: '0x6666BB',
+      sounds: {
+        move: 'spinmove1.mp3',
+        start: 'spinstart1.mp3',
+        win: 'spinwin1.mp3',
+      },    
+      on_win: function() { op.growler.error("You won!"); },
+    })
+    show_info("<ul><li>Standard rotate puzzle<li>Background tinted</ul>");
+  }
+
+  function stop() {
+    cleanup()
+    op.stop()
+    logo_on()
+  }
+
+  function toggle_controls() {
+    let controls = document.getElementById('controls');
+    if (controls.style.visibility == "hidden" || controls.style.visibility == "") {
+      controls.style.visibility = "visible";
+    } else {
+      controls.style.visibility = "hidden";
+    }
+  }
+
+  function toggle_bg() {
+    if (bg_vis == true) { document.body.style.backgroundImage = 'none'; bg_vis = false; }
+    else { document.body.style.backgroundImage = "url('assets/roguesignal_bg.png')"; bg_vis = true; }
+  }
+
+  function toggle_logo() {
+    document.getElementById('logo').style.visibility = logo_vis ? "hidden" : "visible"
+    logo_vis = logo_vis ? false : true
+  }
+
+  function logo_off() {
+    document.getElementById('logo').style.visibility = "hidden"
+    logo_vis = false
+    document.getElementById('logt').checked = false 
+  }
+  function logo_on() {
+    document.getElementById('logo').style.visibility = "visible"
+    logo_vis = true
+    document.getElementById('logt').checked = true   
+  }
+
+</script>
+</body>

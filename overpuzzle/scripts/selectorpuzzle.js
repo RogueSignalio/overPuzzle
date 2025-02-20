@@ -22,14 +22,6 @@ class Selectorpuzzle extends Codepuzzle {
     this.layout_puzzle(this.config.layout)
     this.pieces.postFX.addGlow("0x000000",5,0)
     this.open_piece = this.pieces.getAt(this.pieces.length - 1);
-
-    // for (let x = 0; x < this.config.rows; x++) {
-    //   for (let y = 0; y < this.config.columns; y++) {
-    //     this.grid[x][y].dat = {}
-    //     this.grid[x][y].dat.overfx = {}
-    //     this.grid[x][y].dat.on = false        
-    //   }
-    // }
     this.interactive = true
     this.last_move = null;
   }

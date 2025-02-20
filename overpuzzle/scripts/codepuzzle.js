@@ -129,15 +129,13 @@ class Codepuzzle extends Imagepuzzle {
   check_board() {
     let solve_ids = this.selected_answers.map((i)=>{ return i.dat.solve_id })
     let check_ids = this.check_merge(solve_ids)
-    //console.log('Done?', done_ids, check_ids,(done_ids == check_ids))
+    console.log('Done?', this.answer, check_ids,(this.answer == check_ids))
     if (this.answer == check_ids) {
       this.win_puzzle()
     }
   }
 
   select_piece(piece) {
-console.log('s1')
-
     piece.dat.count++
     piece.dat.positions.push(this.selected_answers.length + 1)
     piece.dat.decrementing = false
@@ -208,14 +206,12 @@ console.log('s1')
 
   play_piece(piece) {
     if (!this.interactive) { return; }
-console.log('1')
     //console.log(piece.dat.id,piece.dat.row + 1,piece.dat.column + 1)
     if (piece.dat.disabled) { return; }
     if (piece.dat.on_click) {
       piece.dat.on_click.call(this)
       return true;
     }
-console.log('2')
 
     // Unclicked piece
     if (piece.dat.on == false) {
@@ -229,14 +225,17 @@ console.log('2')
       // }
       // Clicked, no or max mutliples, so unclick and decrement
       if (this.last_move == piece.dat.id && piece.dat.decrementing) {
+console.log('p1')
         this.unselect_piece(piece)
       }
       // Already Clicked, multiples allowed, not capped
       else if ((this.selected_answers.length < this.answer_length) && (this.config.multiples > 1) && (piece.dat.count < this.config.multiples)) {
+console.log('p4')
         this.select_piece(piece)
       }
       // Clicked, no or max mutliples, so unclick and decrement
       else if (this.last_move == piece.dat.id) {
+console.log(this.last_move +' : '+ piece.dat.id)
         this.unselect_piece(piece)
       }
       else {

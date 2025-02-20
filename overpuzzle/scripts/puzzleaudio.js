@@ -25,8 +25,9 @@ class Puzzleaudio extends Phaser.Scene {
   }
 
   play_sound(key,options={}) {
+    if (! this.sounds[key]) { return null }
     let a = this.sounds[key].sound
-    if (!a) { return false; }
+    if (!a) { return null }
     if (options.detune) {
       a.detune = getRndInteger(-1 * options.detune,options.detune)
     }

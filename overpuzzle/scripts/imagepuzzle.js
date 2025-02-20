@@ -201,6 +201,7 @@ class Imagepuzzle extends Phaser.Scene {
       if (p[1][2] != undefined) { piece.angle = p[1][2]}
       if (!this.piece_ids[x]) { this.piece_ids[x] = [] }
       if (!this.grid[x]) { this.grid[x] = [] }
+      this.piece_ids[x][y] = i
       let id = this.piece_ids[x][y]
 
       piece.dat = {

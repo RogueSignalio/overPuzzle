@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <link rel="icon" href="assets/favicon.png">
-    <title>OverSlider by RogueSignal.io</title>
+    <title>OverPuzzle by RogueSignal.io</title>
     <link rel="stylesheet" href="css/over.css" id="page_style">
     <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.24.1/phaser.min.js" crossorigin="anonymous"></script>
     --><!-- Phaser 3.5+ changed rotation behavior on particles!?!?!?  Need to find some answers /-->
@@ -39,7 +39,7 @@
   <button onClick="code5_puzzle()">ExternalCode</button><br> 
 </div>
 <div id="logo" class="logo" style="opacity:0.8;z-index:9999;">
-<p class="rsyellow">OverPuzzle 0.92 by <a href="http://www.roguesignal.io" target="_BLANK_">RogueSignal.IO</a> | <a href="https://github.com/roguesignalio/overPuzzle" target="_BLANK_" id="readme">Git Project</a></p>
+<p class="rsyellow">OverPuzzle by <a href="http://www.roguesignal.io" target="_BLANK_">RogueSignal.IO</a> | <a href="https://github.com/roguesignalio/overPuzzle" target="_BLANK_" id="readme">Git Project</a></p>
 <img src="assets/RogueSignal_FullLogo.svg" style="width:350px;"/>
 <p>
 <ul id="details" class="details">
@@ -47,7 +47,7 @@
   <li> Using callbacks, can be integrated with any client or server side app.
   <li> Submit moves or solutions to server to trigger backend checking/winning behavior.
   <li> Uses plugin architecture
-  <li> Built on lexible game glasses, making it easy to build new puzzle types on.
+  <li> Built on flexible game classes, making it easy to build new puzzle types on.
   <li> Provides simple audio integration and control.
   <li> Simple to use in any Javascript or Web page.
   <li> Uses and makes available full power of <strong>PhaserJS</strong> scenes. (PhaserJS 3.55 to 3.85 tested)
@@ -164,8 +164,10 @@
     cleanup()
     op.add_puzzle('slide1', { 
       type: 'slidepuzzle', 
-      backgrounds: [ 'myslideback7.jpg'], 
-      images: ['myslide2.jpg'],
+      // backgrounds: [ 'myslideback7.jpg'], 
+      // images: ['myslide2.jpg'],
+      backgrounds: [ 'https://roguesignalio.github.io/overPuzzle/overpuzzle/assets/myslideback7.jpg'], 
+      images: ['https://roguesignalio.github.io/overPuzzle/overpuzzle/assets/myslide2.jpg'],
       rows: 3,
       columns: 3,
       shuffle_speed: 80,
@@ -176,10 +178,10 @@
       table_width: 500,
       table_height: 500,
       sounds: {
-        move: 'slidemove1.mp3',
+        move: 'https://roguesignalio.github.io/overPuzzle/overpuzzle/audio/slidemove1.mp3',
         start: 'slidestart1.mp3',
         win: 'slidewon1.mp3',
-        no_move: 'slidenomove1.mp3',
+        no_move: 'https://roguesignalio.github.io/overPuzzle/overpuzzle/audio/slidenomove1.mp3',
       },
       on_win: ()=> { op.growler.success("You won!"); },
     })
@@ -509,13 +511,13 @@
       table_height: 400,
       sounds: {
         move: 'slidemove1.mp3',
-        start: 'slidestart1.mp3',
-        win: 'slidewon1.mp3',
+        // start: 'slidestart1.mp3',
+        // win: 'slidewon1.mp3',
         no_move: 'slidenomove1.mp3',
       },
       on_win: ()=> { op.growler.success("You won!"); },
     })
-    show_info("<ul><li>Standard slide puzzle<li>Oversized background<li>Visible shuffle<li>Custom open piece.</ul>")
+    show_info("<ul><li>Word Hunt<li><li><li></ul>")
   }
 
   function selector_one() {
@@ -534,13 +536,13 @@
       table_height: 400,
       sounds: {
         move: 'slidemove1.mp3',
-        start: 'slidestart1.mp3',
-        win: 'slidewon1.mp3',
+        // start: 'slidestart1.mp3',
+        // win: 'slidewon1.mp3',
         no_move: 'slidenomove1.mp3',
       },
       on_win: ()=> { op.growler.success("You won!"); },
     })
-    show_info("<ul><li>Standard slide puzzle<li>Oversized background<li>Visible shuffle<li>Custom open piece.</ul>")
+    show_info("<ul><li>Selector Puzzle<li>Select Two Objects<li>Objects from image array and placement layout provided.</ul>")
   }
 
   function stop() {
