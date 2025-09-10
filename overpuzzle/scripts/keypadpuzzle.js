@@ -48,4 +48,10 @@ class Keypadpuzzle extends Codepuzzle {
     this.check_board()
     return true
   }  
+
+  win_puzzle() {
+    this.panel_update('code_display','Solved!');
+    super.win_puzzle()
+  }
+
 }

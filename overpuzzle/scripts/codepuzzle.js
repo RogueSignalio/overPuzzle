@@ -87,7 +87,6 @@ class Codepuzzle extends Imagepuzzle {
     // * assigned by you (piece_ids) OR
     // * generated from image slices
     if ((!this.config.answers) && (!this.config.answer_hash)) {
-      console.log('a')
       let myids = this.ids;
       while (true) {
         let pick = Phaser.Utils.Array.GetRandom(myids)
@@ -125,11 +124,20 @@ class Codepuzzle extends Imagepuzzle {
     super.start_play()
   }
 
+  check_ids() {
+    let check_ids = this.selected_answers.map((i)=>{ return i.dat.solve_id })
+    return check_ids
+  }
+
+  merge_ids(chr=',') {
+    return this.check_ids().join(chr)
+  }
+
   // You probably need to override this method to check winning condition.
   check_board() {
     let solve_ids = this.selected_answers.map((i)=>{ return i.dat.solve_id })
     let check_ids = this.check_merge(solve_ids)
-    console.log('Done?', this.answer, check_ids,(this.answer == check_ids))
+//    console.log('Done?', this.answer, check_ids,(this.answer == check_ids))
     if (this.answer == check_ids) {
       this.win_puzzle()
     }
@@ -290,4 +298,5 @@ class Codepuzzle extends Imagepuzzle {
       '#00FF00','Enter Code'
     )
   }
+
 }
