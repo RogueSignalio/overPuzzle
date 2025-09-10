@@ -37,10 +37,14 @@ class OverPuzzle {
       transparent: true,          // Transparent or not background
       parent: 'overpuzzle',
       z_index: 10001,
+      minimized_scripts: false,
       ...config
     }
 
     this.loaded = {}
+    if (!window.overpuzzle_loaded) {
+      window.overpuzzle_loaded = {}
+    }
     this.scenes = {}
     this.counter = 0
     this.muted = false
@@ -81,7 +85,7 @@ class OverPuzzle {
   to_back(zindex=(this.config.z_index*-1)) { this.engine.canvas.style.zIndex = zindex; this.engine.canvas.style.visibility = 'hidden'; this.engine.canvas.blur(); }
 
   load_script(name,onload=null) {
-    if (this.config.preload) { this.loaded[name] = true; }
+    if (this.config.preload) { window.overpuzzle_loaded[name] = true; }
     else {
       if (this.plugins[name] != null) {
         this.load_script(this.plugins[name], ()=>{
@@ -93,16 +97,20 @@ class OverPuzzle {
   }
 
   insert_script(name,onload=()=>{ }) {
-    if (this.loaded[name]) {
+    let min = ''
+    if (this.config.minimized_scripts) {
+      min = '.min'
+    }
+    if (window.overpuzzle_loaded[name]) {
       onload.call(this)
     } else {
       let script = document.createElement('script');
       script.id = `${name}.js`;
-      script.src = `${this.config.modules_path}/${name}.js`;
+      script.src = `${this.config.modules_path}/${name}${min}.js`;
   //    script.type = 'module';
       document.body.append(script);
       script.onload = ()=> { 
-        this.loaded[name] = true; 
+        window.overpuzzle_loaded[name] = true; 
         onload.call(this);  
         this.config.debug && console.log(`${name} loaded.`); 
       }
