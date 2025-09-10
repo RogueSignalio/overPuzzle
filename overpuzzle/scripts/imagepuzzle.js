@@ -338,8 +338,8 @@ class Imagepuzzle extends Phaser.Scene {
   }
 
   shuffle_board() {
-    if (this.config.shuffles < 1) { this.start_play(); return true; }
     if (this.config.solved == true) { this.win_puzzle(); return true; }
+    if (this.config.shuffles < 1) { this.start_play(); return true; }
     const moves = [];
     const spacerCol = this.open_piece.dat.column
     const spacerRow = this.open_piece.dat.row
