@@ -112,7 +112,7 @@ class OverPuzzle {
   // Add a new puzzle.
   // TODO: disable auto run_scene by default.
   add_puzzle(key,puzzle={},after_init=()=>{}) {
-    op.stop_current_puzzle()
+    this.stop_current_puzzle()
     var type = puzzle.type
     if (!this.loaded[type]) { this.load_script(type,()=>{ this.init_puzzle(key,type,puzzle,after_init); }) }
     else {

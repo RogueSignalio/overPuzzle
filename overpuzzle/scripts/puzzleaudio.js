@@ -38,6 +38,7 @@ class Puzzleaudio extends Phaser.Scene {
   }
 
   play_sound_unique(key,options={}) {
+    if (! this.sounds[key]) { return null }
     if (options.detune) {
       options.detune = getRndInteger(-1 * options.detune, options.detune)
     }    

@@ -25,9 +25,9 @@ class Slidepuzzle extends Imagepuzzle {
     this.shuffle_board();
   }
 
-  win_puzzle() {
+  do_win() {
     this.open_piece.alpha = 1;
-    super.win_puzzle()
+    super.do_win()
   }
 
   play_piece(piece) {

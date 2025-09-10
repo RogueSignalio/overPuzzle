@@ -13,6 +13,7 @@ class Imagepuzzle extends Phaser.Scene {
     this.overmaster = overmaster
     this.key = puzzle.key
     this.config = {
+      solved: false,
       rows: 3,
       columns: 3,
       piece_width: 0,
@@ -22,6 +23,7 @@ class Imagepuzzle extends Phaser.Scene {
       move_speed: 250, // 0 for instant shuffle
       images: [],
       backgrounds: [],
+      background_tint: null,
       image_path: this.overmaster.config.image_path,
       audio_path: this.overmaster.config.audio_path,
       sounds: {},
@@ -40,13 +42,14 @@ class Imagepuzzle extends Phaser.Scene {
       answer_hash: null, 
       solve_ids: null, // Solve ids are a non-unique designator for puzzles where pieces are interchangeable. Or match in matching games.
 //      shuffled_ids: null, // Set to an array desginating that the image has been pre-shuffled and to just cut and assign ids.
-      // Callbacks
       no_audio_keys: [],
-      on_check: function() {  }.bind(this),
-      on_win: function() { console.log('won!') }.bind(this),
-      on_move: function(p) { console.log(`Move: ${this.move_count}`) }.bind(this),
-      on_ready: function() { }.bind(this),
-
+      // Callbacks
+      on_check: function() { }.bind(this), //console.log('Check win...') }.bind(this),
+      on_win: function() { }.bind(this), //console.log('You won!') }.bind(this),
+      on_move: function(p) { }.bind(this), //console.log(`Move: ${this.move_count}`) }.bind(this),
+      on_ready: function() { }.bind(this), //console.log('Puzzle ready!')}.bind(this),
+      pre_win: null,
+      //function() { console.log('You handle the win...') }.bind(this),
       // Audio functions to override.
       on_move_audio: function(p) { this.play_sound_unqiue('move',{ detune: 300 }) }.bind(this),
       on_no_move_audio: function(p) { this.play_sound_unqiue('no_move',{ detune: 300 }) }.bind(this),
@@ -61,6 +64,7 @@ class Imagepuzzle extends Phaser.Scene {
     this.on_win = this.config.on_win
     this.on_move = this.config.on_move
     this.on_ready = this.config.on_ready    
+    this.pre_win = this.config.pre_win    
     this.on_move_audio = this.config.on_move_audio
     this.on_no_move_audio = this.config.on_no_move_audio
     this.on_win_audio = this.config.on_win_audio
@@ -123,15 +127,19 @@ class Imagepuzzle extends Phaser.Scene {
     this.background_current = this.background_keys[this.background_index]
 
     this.load.setPath(this.config.audio_path);
-    Object.entries(this.config.sounds).forEach(([key, value]) => { 
-      this.load.audio(`${this.key}_${key}_snd`,value);
+    Object.entries(this.config.sounds).forEach(([key, value]) => {
+      if (value) { 
+        this.load.audio(`${this.key}_${key}_snd`,value);
+      }
     })
   }
 
   create () {
     Object.entries(this.config.sounds).forEach(([key, value]) => { 
-      this.audio_keys.push(key)
-      this.audio_engine.add_sound(`${this.key}_${key}_snd`,this.key)
+      if (value) { 
+        this.audio_keys.push(key)
+        this.audio_engine.add_sound(`${this.key}_${key}_snd`,this.key)
+      }
     })
     window.solve = () => {
       this.nextRound();
@@ -315,27 +323,23 @@ class Imagepuzzle extends Phaser.Scene {
         i++;
       }
     }
-console.log(this.config.answers)
     if (this.config.answers) {
-console.log(1)
       this.answer = this.check_merge(this.config.answers)
     } else if (this.config.answer_hash) {
-console.log(2)
       this.answer = this.config.answer_hash
       this.hashing = true
     } else {
-console.log(3)
       if (!this.config.solve_ids) {
         this.answer = this.check_merge(this.ids)
       } else {
         this.answer = this.check_merge(this.config.solve_ids)
       }
     }
-    console.log(this.answer)
   }
 
   shuffle_board() {
     if (this.config.shuffles < 1) { this.start_play(); return true; }
+    if (this.config.solved == true) { this.win_puzzle(); return true; }
     const moves = [];
     const spacerCol = this.open_piece.dat.column
     const spacerRow = this.open_piece.dat.row
@@ -420,7 +424,6 @@ console.log(3)
     if (ret == true) { 
       this.move_count++
       this.on_move.call(this,p)
-      //console.log(this.config.no_audio_keys,p.dat.id,this.config.no_audio_keys.indexOf(p.dat.id))
       if (this.config.no_audio_keys.indexOf(p.dat.id) < 0) {
         this.on_move_audio.call(this)
       }
@@ -443,15 +446,25 @@ console.log(3)
     this.interactive = true
   }
 
-  // You probably need to override this method to check winning condition.
-  check_board() {
+  check_ids() {
     let check_ids = []
     for (let x = 0; x < this.config.rows; x++) {
       for (let y = 0; y < this.config.columns; y++) {
         check_ids.push(this.grid[x][y].dat.solve_id)
       }
-    }    
-    if (this.answer == this.check_merge(check_ids)) {
+    }
+    return check_ids
+  }
+
+  merge_ids(chr=',') {
+    return this.check_ids().join(chr)
+  }
+
+  // You probably need to override this method to check winning condition.
+  check_board() {
+    let ck_ids = this.check_ids()
+//console.log('Answer' + this.answer)
+    if (this.answer == this.check_merge(ck_ids)) {
       this.win_puzzle()
     } else {
       //console.log('Done?', done_ids, check_ids.join(','),(done_ids == check_ids.join(',')))      
@@ -460,7 +473,9 @@ console.log(3)
 
   check_merge(ids=[]) {
     let cm = ids.join(',')
+// console.log(cm)
     if (this.hashing) { cm = md5(cm); }
+// console.log(cm)
     return cm;
   }
 
@@ -471,6 +486,14 @@ console.log(3)
   }
 
   win_puzzle() {
+    if (this.pre_win) {
+      this.pre_win.call(this)
+    } else {
+      this.do_win()
+    }
+  }
+
+  do_win() {
     this.interactive = false;
     this.glow_puzzle()
     this.on_win.call(this)

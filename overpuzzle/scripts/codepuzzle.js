@@ -225,17 +225,14 @@ class Codepuzzle extends Imagepuzzle {
       // }
       // Clicked, no or max mutliples, so unclick and decrement
       if (this.last_move == piece.dat.id && piece.dat.decrementing) {
-console.log('p1')
         this.unselect_piece(piece)
       }
       // Already Clicked, multiples allowed, not capped
       else if ((this.selected_answers.length < this.answer_length) && (this.config.multiples > 1) && (piece.dat.count < this.config.multiples)) {
-console.log('p4')
         this.select_piece(piece)
       }
       // Clicked, no or max mutliples, so unclick and decrement
-      else if (this.last_move == piece.dat.id) {
-console.log(this.last_move +' : '+ piece.dat.id)
+      else if (this.last_move == piece.dat.id ) {
         this.unselect_piece(piece)
       }
       else {

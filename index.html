@@ -25,7 +25,7 @@
 <br>
   <button onClick="slide1_puzzle()">Slide1</button><br> 
   <button onClick="slide3_puzzle()">Slide2</button><br> 
-  <!-- <button onClick="slide2_puzzle()">Slide2</button><br>  -->
+  <button onClick="slide1_server_puzzle()">Server Slide</button><br>
   <button onClick="code1_puzzle()">Code1</button><br> 
   <button onClick="code2_puzzle()">Code2</button><br> 
   <button onClick="code3_puzzle()">Code3</button><br> 
@@ -106,7 +106,21 @@
       background-image: url('./assets/overgrowl-gear.png');
       background-size: cover;      
     `)
+  }
 
+  function growlSource(src) {
+    if (typeof src === 'string' || src instanceof String) { src = eval(src); }
+    setTimeout(() => { op.growler.thinking(
+      `<pre style="width:100%;overflow:auto;">Puzzle Source:\n${src}</pre>`,
+      { duration: 0, close_button: true }) 
+    },1000)
+  }
+
+  function show_info(info,caller=null) {
+    // info = info + `<br><button onClick='growlSource(${caller.name})'>See Source</button>`
+    setTimeout(() => { 
+      op.growler.thinking(info,{ duration: 0, close_button: true }) 
+    },1000)
   }
 
   function cleanup() {
@@ -114,9 +128,7 @@
     op.growler.clearGrowls() 
     logo_off()
   }
-  function show_info(info) {
-    setTimeout(() => { op.growler.thinking(info,{ duration: 0, close_button: true }) },1000)
-  }
+
 
   function swap1_puzzle() {
     cleanup()
@@ -160,6 +172,42 @@
     show_info("<ul><li>Swaps consecutive pieces.<li>Turn an image into non-unqiue pieces.<li>Uses a non-unique answer set (ex., all blue are interchangeable).<li>Requires caller to provide hints to solve.<li>Post puzzle hook (provides hints).</ul>");
   }
 
+  function slide1_server_puzzle() {
+    cleanup()
+      if (op == undefined) {
+        op = new OverPuzzle({
+            width: 400  ,
+            height:400 ,
+            transparent: true,
+        })
+      }
+      op.add_puzzle('donovan',{
+        type: "slidepuzzle",
+        rows: 4,
+        columns: 4,
+        board_width: 384,
+        board_height: 384,
+        table_width: 400,
+        table_height: 400,
+        shuffles: 2,
+        sounds: {"move":null,"start":null,"win":null,"no_move":null},
+        on_win: ()=> { },
+        on_check: ()=> { },
+        on_move: ()=> { },
+        on_ready: ()=> { },
+        pre_win: ()=> {
+          console.log('do something else...')
+        //  this.do_win();
+        },
+        open_piece: [1,1],
+        images: ["server_side_source.png"],
+        backgrounds: ["myslideback10.jpg"],
+        background_tint: "0xbb8800",
+        answer_hash: "c88dcb603479260ba7d765e28151f076",
+        piece_ids: [["7f38763a43e97ba97dd3ff91f7481021","6326d07e61869c4ae9c157b8317ef3ed","7efdd20cba9dad2419c4bc5df568be90","ba33c26332def3881bd7a3ccc7b2deae"],["fd3cd0fa27d2a27389f45499bd855ac3","d0cc4529cec143208a80d9850e8c0564","69eedd21c79033d18fed9b5e84750171","5c75b2fe3e08ea3a72e5fad7f7c83bdc"],["1d1450a2c91166ca096e03c54d8738ff","89d23e364465f2fd729e19fbab29e620","aeecf152063a2a2a217902aa1d0004d5","09a05345f75c3ef1f475a027da190fb7"],["009858966d7fd73fc76bc3fb27515dd8","d4dbb40211b14b9d70095829dcbe93fc","5cf8dd53f3c17924cca4388c25ed4bff","709416945fbdf0a4a508e6ce83c10921"]],
+      })
+  }
+
   function slide1_puzzle() {
     cleanup()
     op.add_puzzle('slide1', { 
@@ -173,6 +221,7 @@
       shuffle_speed: 80,
       shuffles: 30,
       open_piece: [2,2],
+      solved: true,
       board_width: puzzle_width,
       board_height: puzzle_height,
       table_width: 500,
@@ -241,6 +290,7 @@
   }
 
   function code1_puzzle() {
+  // Basic Code Puzzle Example
     cleanup()
     op.add_puzzle('code1', { 
       type: 'codepuzzle', 
@@ -248,13 +298,12 @@
       images: ['myrunes2.png'],
       rows: 4,
       columns: 4,
-//      shuffle_speed: 0,
       answer_length: 4,
       shuffles: 0,
-      board_width: puzzle_width,
-      board_height: puzzle_height,
-      table_width: 360,
-      table_height: 360,
+      board_width: 420,
+      board_height: 420,
+      table_width: 480,
+      table_height: 480,
       sounds: {
         move: 'codemove1.mp3',
         start: 'codestart1.mp3',
@@ -265,7 +314,12 @@
     },function() {
       op.growler.system('Solution is (row,column): ' + this.answer_coords,{ duration: 0, close_button: true });
     })    
-    show_info("<ul><li>Answer length = 4<li>No shuffle<li>No duplicate selection<li>Post puzzle hook (provides solution).</ul>")
+    show_info(`
+      <li>Answer length = 4
+      <li>No shuffle
+      <li>No duplicate selection
+      <li>Post puzzle hook (provides solution).
+    `,arguments.callee)
   }
 
   function code2_puzzle() {
