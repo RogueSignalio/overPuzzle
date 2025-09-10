@@ -32,6 +32,8 @@ class Rotatepuzzle extends Imagepuzzle {
   }
 
   shuffle_board() {
+    if (this.config.solved == true) { this.win_puzzle(); return true; }
+
     const moves = [];
     let counter = 1;
     this.shuffles = this.config.rows * this.config.columns
@@ -92,6 +94,20 @@ class Rotatepuzzle extends Imagepuzzle {
     })
     
     return true
+  }
+
+  check_ids() {
+    let check_ids = []
+    for (let x = 0; x < this.config.rows; x++) {
+      for (let y = 0; y < this.config.columns; y++) {
+        check_ids.push(Math.round(this.grid[x][y].angle))
+      }
+    }
+    return check_ids
+  }
+
+  merge_ids(chr=',') {
+    return this.check_ids().join(chr)
   }
 
   check_board() {
