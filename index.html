@@ -162,12 +162,13 @@
       },
       on_win: ()=> { op.growler.success("You won!"); },
     },function() {
-      op.growler.system(`<ul>
+      op.growler.system(`
+      Rules: <ul>
 <li> Diagonals don't count.
-<li> Red always touches a yellow, but never itself.
+<li> Red always touches a yellow.
 <li> Blue and Green never touch yellow.
-<li> Purple and red never touch.
-<li> The sky never touches the grass.
+<li> Purple never touches red or itself.
+<li> The sky is above and never touches the grass below.
 <li> Purple is never in the center lines (vertical or horizontal).
 <li> Hint, red in the very center.
       </ul>`,{ duration: 0, close_button: true });
