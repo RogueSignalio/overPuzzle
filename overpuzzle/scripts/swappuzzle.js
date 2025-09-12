@@ -56,6 +56,20 @@ class Swappuzzle extends Codepuzzle {
     return true
   }
 
+  check_ids() {
+    let check_ids = []
+    for (let x = 0; x < this.config.rows; x++) {
+      for (let y = 0; y < this.config.columns; y++) {
+        check_ids.push(this.grid[x][y].dat.solve_id)
+      }
+    }
+    return check_ids
+  }
+
+  merge_ids(chr=',') {
+    return this.check_ids().join(chr)
+  }
+
   // You probably need to override this method to check winning condition.
   check_board() {
     let check_ids = []
