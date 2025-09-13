@@ -18,7 +18,7 @@ class Swappuzzle extends Codepuzzle {
 
   start_puzzle (rows, columns) {
     this.slice_puzzle(rows,columns)
-    this.pieces.postFX.addGlow("0x000000",5,0)
+//    this.pieces.postFX.addGlow("0x000000",5,0)
     this.open_piece = this.pieces.getAt(this.pieces.length - 1);
 
     for (let x = 0; x < this.config.rows; x++) {
