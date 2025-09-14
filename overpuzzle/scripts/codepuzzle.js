@@ -277,7 +277,7 @@ class Codepuzzle extends Imagepuzzle {
           color: '#ffee55',
         }
       );
-      piece.dat.overfx.label.preFX.addGlow("0x000000",5,0);
+//      piece.dat.overfx.label.preFX.addGlow("0x000000",5,0);
     }
     // piece.dat.old_tint = piece.tint
   }

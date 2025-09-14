@@ -9,7 +9,8 @@
     <link rel="stylesheet" href="css/over.css" id="page_style">
     <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.24.1/phaser.min.js" crossorigin="anonymous"></script>
     --><!-- Phaser 3.5+ changed rotation behavior on particles!?!?!?  Need to find some answers /-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.85.0/phaser.min.js" crossorigin="anonymous"></script> 
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.85.0/phaser.min.js" crossorigin="anonymous"></script>  -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.90.0/phaser.min.js" crossorigin="anonymous"></script> 
     <script src="https://cdn.jsdelivr.net/gh/RogueSignalio/overGrowl@v1.1/over_growl.min.js" ></script>
     <script src="overpuzzle/overpuzzle.js" crossorigin="anonymous"></script>
 </head>
@@ -136,17 +137,21 @@
     cleanup()
     op.add_puzzle('swap1', { 
       type: 'swappuzzle', 
-      backgrounds: [ 'tabletop.png'], 
-      images: ['marbleboard1.png'],
+      backgrounds: [ 'marble_backboard.png'], 
+      images: ['marbleboard1_sm.png'],
       rows: 5,
       columns: 5,
       shuffles: 300,
       shuffle_speed: 0,
       // open_piece: [2,2],
-      board_width: 300,
-      board_height: 300,
-      table_width: 400,
-      table_height: 400,
+      board_width: 280,
+      board_height: 280,
+      table_width: 340,
+      table_height: 340,
+      // board_width: 300,
+      // board_height: 300,
+      // table_width: 400,
+      // table_height: 400,
       solve_ids: [
         ['b','b','r','b','b'],
         ['b','p','y','p','b'],
@@ -220,12 +225,12 @@
       // images: ['myslide2.jpg'],
       backgrounds: [ 'https://roguesignalio.github.io/overPuzzle/overpuzzle/assets/myslideback7.jpg'], 
       images: ['https://roguesignalio.github.io/overPuzzle/overpuzzle/assets/myslide2.jpg'],
-      rows: 3,
-      columns: 3,
+      rows: 4,
+      columns: 4,
       shuffle_speed: 80,
       shuffles: 30,
       open_piece: [2,2],
-      solved: true,
+      // solved: true,
       board_width: puzzle_width,
       board_height: puzzle_height,
       table_width: 500,

@@ -29,6 +29,7 @@ class Swappuzzle extends Codepuzzle {
         piece.dat.positions = []
         piece.dat.decrementing = true
         piece.dat.count = 0
+//        piece.tint = '0x000000'
       }
     }
     this.shuffle_board();
@@ -50,7 +51,7 @@ class Swappuzzle extends Codepuzzle {
       }
     } else {
       this.unselect_piece(this.open_piece)
-      this.play_swap_piece(piece.dat.row , piece.dat.column, null, this.check_board );
+      this.play_swap_piece(piece.dat.row , piece.dat.column, 200); //, this.check_board );
       this.last_move = null
     }
     return true
@@ -97,8 +98,44 @@ class Swappuzzle extends Codepuzzle {
     this.grid[row][column] = this.open_piece
     this.grid[piece.dat.row][piece.dat.column] = piece
 
-    this.open_piece.setPosition(piece.x, piece.y);
+ //   this.open_piece.setPosition(piece.x, piece.y);
+    this.slide_piece(this.open_piece,piece.x,piece.y,speed,()=>{})
     this.slide_piece(piece,x,y,speed,this.check_board)
   }
 
+  hightlight_piece(piece) {
+    if (!this.config.piece_glow) { return false; }
+    const xadj = piece.x + this.pieces.x - (this.piece_width/2) 
+    const yadj = piece.y + this.pieces.y - (this.piece_height/1.5)
+
+    piece.setToTop()
+    piece.dat.overfx.glow = piece.preFX.addGlow("0xffffAA",5,0);
+    // piece.dat.overfx.glowtween = this.tweens.add({
+    //     targets: piece.dat.overfx.glow,
+    //     outerStrength: 15,
+    //     yoyo: true,
+    //     loop: -1,
+    //     ease: 'sine.inout'
+    // });
+    if (this.config.piece_labels) {
+      piece.dat.overfx.label = this.add.text( xadj, yadj , piece.dat.positions.join(',') , 
+        { 
+          originX: 0,
+          originY: 0,          
+          fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif',
+          fontSize: (this.piece_width/this.config.multiples) + 'px', 
+          color: '#ffee55',
+        }
+      );
+//      piece.dat.overfx.label.preFX.addGlow("0x000000",5,0);
+    }
+    // piece.dat.old_tint = piece.tint
+  }
+
+  unhightlight_piece(piece) {
+    if (!this.config.piece_glow) { return false; }
+    // piece.dat.overfx.glowtween.remove()
+    piece.preFX.remove(piece.dat.overfx.glow);
+    piece.setToBack()
+  }
 }
