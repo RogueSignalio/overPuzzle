@@ -11,6 +11,8 @@ class Rotatepuzzle extends Imagepuzzle {
   constructor (puzzle,overmaster) {
     let temp_config = {
       inc_angle: 90,
+      spin_step_delay: 100,
+      spin_delay: 10,
       ...puzzle
     }
     super(temp_config,overmaster);
@@ -28,7 +30,7 @@ class Rotatepuzzle extends Imagepuzzle {
       }
     }
     this.last_move = null;
-    setTimeout(function() { this.shuffle_board() }.bind(this),500);
+    setTimeout(function() { this.shuffle_board() }.bind(this),this.config.spin_delay);
   }
 
   shuffle_board() {
@@ -56,7 +58,7 @@ class Rotatepuzzle extends Imagepuzzle {
               this.start_play()
             }
           })
-        }.bind(this),counter * 50);
+        }.bind(this),counter * this.config.spin_step_delay);
         counter++;
       }
     }

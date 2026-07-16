@@ -15,6 +15,7 @@ class OverPuzzle {
       codepuzzle: 'imagepuzzle',
       rotatepuzzle: 'imagepuzzle',
       swappuzzle: 'codepuzzle',
+      justapuzzle: 'codepuzzle',
       keypadpuzzle: 'codepuzzle',
       wordhunt: 'codepuzzle',
       selectorpuzzle: 'codepuzzle',
@@ -85,9 +86,12 @@ class OverPuzzle {
   to_back(zindex=(this.config.z_index*-1)) { this.engine.canvas.style.zIndex = zindex; this.engine.canvas.style.visibility = 'hidden'; this.engine.canvas.blur(); }
 
   load_script(name,onload=null) {
+    console.log(name)
     if (this.config.preload) { window.overpuzzle_loaded[name] = true; }
     else {
       if (this.plugins[name] != null) {
+    console.log(name)
+
         this.load_script(this.plugins[name], ()=>{
           this.insert_script(name,onload)
         })

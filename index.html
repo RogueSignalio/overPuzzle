@@ -33,7 +33,9 @@
   <button onClick="code4_puzzle()">Code4</button><br> 
   <button onClick="rotate2_puzzle()">Rotate 45</button><br> 
   <button onClick="rotate1_puzzle()">Rotate</button><br> 
-  <button onClick="swap1_puzzle()">Swap</button><br> 
+  <button onClick="swap1_puzzle()">Swap1</button><br> 
+  <button onClick="swap2_puzzle()">Swap2</button><br> 
+  <button onClick="justa1_puzzle()">Puzzle1</button><br> 
   <button onClick="word_hunt()">Word Hunt</button><br> 
   <button onClick="selector_one()">SelectIt</button><br> 
   <button onClick="scramble_example()">Scramble It!</button><br> 
@@ -132,8 +134,7 @@
     logo_off()
   }
 
-
-  function swap1_puzzle() {
+  function swap2_puzzle() {
     cleanup()
     op.add_puzzle('swap1', { 
       type: 'swappuzzle', 
@@ -179,6 +180,66 @@
       </ul>`,{ duration: 0, close_button: true });
     })
     show_info("<ul><li>Swaps consecutive pieces.<li>Turn an image into non-unqiue pieces.<li>Uses a non-unique answer set (ex., all blue are interchangeable).<li>Requires caller to provide hints to solve.<li>Post puzzle hook (provides hints).</ul>");
+  }
+
+  function swap1_puzzle() {
+    cleanup()
+    op.add_puzzle('swap2', { 
+      type: 'swappuzzle', 
+      backgrounds: [ 'metal_panel.png'], 
+      images: ['myslideback9.jpg'],
+      rows: 5,
+      columns: 5,
+      shuffles: 300,
+      shuffle_speed: 0,
+      board_width: 340,
+      board_height: 340,
+      table_width: 480,
+      table_height: 480,
+      sounds: {
+        move: 'marblemove2.mp3',
+        start: 'swapstart1.mp3',
+        win: 'swapwon1.mp3',
+        no_move: 'slidenomove1.mp3',
+      },
+      on_win: ()=> { op.growler.success("You won!"); },
+    },function() {
+//       op.growler.system(`
+//       Rules: <ul>
+// <li> Diagonals don't count.
+//       </ul>`,{ duration: 0, close_button: true });
+    })
+    show_info("<ul><li>Swaps consecutive pieces.<li>Turn an image into unqiue pieces for a swap puzzle.</ul>");
+  }
+
+  function justa1_puzzle() {
+    cleanup()
+    op.add_puzzle('justa1', { 
+      type: 'justapuzzle', 
+      backgrounds: [ 'metal_panel.png'], 
+      images: ['myslideback9.jpg'],
+      rows: 5,
+      columns: 5,
+      shuffles: 300,
+      shuffle_speed: 0,
+      board_width: 340,
+      board_height: 340,
+      table_width: 480,
+      table_height: 480,
+      sounds: {
+        move: 'marblemove2.mp3',
+        start: 'swapstart1.mp3',
+        win: 'swapwon1.mp3',
+        no_move: 'slidenomove1.mp3',
+      },
+      on_win: ()=> { op.growler.success("You won!"); },
+    },function() {
+//       op.growler.system(`
+//       Rules: <ul>
+// <li> Diagonals don't count.
+//       </ul>`,{ duration: 0, close_button: true });
+    })
+    show_info("<ul><li>Swaps consecutive pieces.<li>Turn an image into unqiue pieces for a swap puzzle.</ul>");
   }
 
   function slide1_server_puzzle() {

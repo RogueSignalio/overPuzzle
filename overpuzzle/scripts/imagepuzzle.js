@@ -387,6 +387,20 @@ class Imagepuzzle extends Phaser.Scene {
     }
   }
 
+  get_x_column(x) {
+    return Math.abs(Math.floor(x / this.piece_width))
+  }
+  get_y_row(y) {
+    return Math.abs(Math.floor(y / this.piece_height))
+  }
+
+  get_column_x(column) {
+    return Math.round(this.piece_width * column + (this.piece_width/2))
+  }
+  get_row_y(row) {
+    return Math.round(this.piece_height * row + (this.piece_height/2))
+  }
+
   get_piece(row, column) {
     return this.grid[row][column]
   }

@@ -7,7 +7,7 @@
 // 
 //  See README.txt
 //===========================================================================
-class Swappuzzle extends Codepuzzle {
+class Justapuzzle extends Codepuzzle {
   constructor (puzzle,overmaster) {
     let temp_config = {
       piece_labels: false,
@@ -18,7 +18,39 @@ class Swappuzzle extends Codepuzzle {
 
   start_puzzle (rows, columns) {
     this.slice_puzzle(rows,columns)
-//    this.pieces.postFX.addGlow("0x000000",5,0)
+    const bounds = this.pieces.getBounds();
+
+// Set size manually if needed
+    this.pieces.setSize(bounds.width, bounds.height);
+     // Create a background graphic (e.g., red, 300x300)
+    const bg = this.add.graphics();
+    // bg.lineStyle(2, 0xaaaaaa, 1);
+    // bg.strokeRect(0, 0, bounds.width, bounds.height);
+    // // bg.fillRect(0, 0, );
+    // // Add the background to the container
+    // // Place this as the first item so it renders behind other children
+    // this.pieces.add(bg);
+    const grid = this.add.grid(
+        this.pieces.x - this.piece_width/6, this.pieces.y - this.piece_height/6,          // x, y position
+        bounds.width, bounds.height,          // width, height of the grid area
+        this.piece_width, this.piece_height,            // cell width, cell height
+        0x000000, 0,     // fill color, fill alpha
+        0x777777, 0.5      // outline color, outline alpha
+    );
+
+// Add to container
+    this.pieces.add(grid);
+
+    this.pieces.setInteractive(
+      new Phaser.Geom.Rectangle(bounds.x, bounds.y, bounds.width, bounds.height), 
+      Phaser.Geom.Rectangle.Contains
+    );
+    this.pieces.input.cursor = 'pointer';
+    this.pieces.on('pointerdown', (pointer) => {
+      console.log('Container clicked at', pointer.x, pointer.y);
+      this.put_piece(pointer.x,pointer.y)
+    });
+
     this.open_piece = this.pieces.getAt(this.pieces.length - 1);
 
     for (let x = 0; x < this.config.rows; x++) {
@@ -32,7 +64,44 @@ class Swappuzzle extends Codepuzzle {
 //        piece.tint = '0x000000'
       }
     }
-    this.shuffle_board();
+//    this.shuffle_board();
+    this.shelf_pieces();
+  }
+
+  put_piece(x,y) {
+    const cx = x - this.pieces.x 
+    const cy = y - this.pieces.y    
+    const nc = this.get_x_column(cx)
+    const nr = this.get_y_row(cy)
+console.log(cx,cy,nc,nr,this.last_move,this.grid)
+    if (this.last_move != undefined) {
+      let piece = this.piece_by_id(this.last_move)
+      // const piece = this.get_piece(nc, nr);
+console.log(piece)
+      piece.dat.row = nr
+      piece.dat.column = nc
+      this.grid[nr][nc] = piece
+      this.slide_piece(piece,this.get_column_x(nc),this.get_row_y(nr),this.config.shuffle_speed,function(){})
+      this.unselect_piece(piece)
+    }
+  }
+
+  shelf_pieces() {
+    let new_row = this.config.rows + 1
+    this.grid[new_row] = []
+    let current_col = 0
+
+    for (let x = 0; x < this.config.rows; x++) {
+      for (let y = 0; y < this.config.columns; y++) {
+        const piece = this.get_piece(x, y);
+        piece.dat.row = new_row; //this.open_piece.dat.row;
+        piece.dat.column = current_col; //this.open_piece.dat.column;
+        this.grid[piece.dat.row][piece.dat.column] = piece
+        this.slide_piece(piece,this.get_column_x(current_col),this.get_row_y(new_row),this.config.shuffle_speed,function(){})
+        current_col++;
+      }
+    }
+    this.start_play()
   }
 
   play_piece(piece) {
