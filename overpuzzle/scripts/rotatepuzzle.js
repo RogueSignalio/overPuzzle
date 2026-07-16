@@ -41,7 +41,7 @@ class Rotatepuzzle extends Imagepuzzle {
     this.shuffles = this.config.rows * this.config.columns
 
     let rotations = []
-    for (let rt = 1; rt <= (360/this.config.inc_angle);rt++) {
+    for (let rt = 1; rt <= (360/this.config.inc_angle - 1);rt++) {
       rotations.push(rt)
     }
     let posi = [1,-1]
@@ -51,6 +51,7 @@ class Rotatepuzzle extends Imagepuzzle {
         let piece = this.grid[x][y]
         let new_angle = (this.config.inc_angle * r)  * (360/this.config.inc_angle - 1)
         let p = Phaser.Utils.Array.GetRandom(posi)
+console.log(r + ';' + new_angle + ';' + p)
         setTimeout(function() { 
           this.rotate_piece_to(piece,new_angle * p,this.config.shuffle_speed, function(){
             this.shuffles--;

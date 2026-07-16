@@ -38,6 +38,8 @@ class Imagepuzzle extends Phaser.Scene {
       piece_ids: null,
       table_xoffset: 0,
       table_yoffset: 0,
+      win_glow_pieces: true,
+      win_shine_image: true,
       answers: null, // Hmmm ...
       answer_hash: null, 
       solve_ids: null, // Solve ids are a non-unique designator for puzzles where pieces are interchangeable. Or match in matching games.
@@ -509,7 +511,14 @@ class Imagepuzzle extends Phaser.Scene {
 
   do_win() {
     this.interactive = false;
-    this.glow_puzzle()
+    this.remove_glow();
+    if (this.config.win_glow_pieces) { this.glow_puzzle() }
+    else {
+      // this.glow_container();
+    }
+    if (this.config.win_shine_image) {
+      this.shine_puzzle()
+    }
     this.on_win.call(this)
     this.on_win_audio.call(this)
   }
@@ -560,9 +569,20 @@ class Imagepuzzle extends Phaser.Scene {
     // Phaser.Display.Align.In.Center(text, this.panels[tag].pz_background);    
   }
 
-  glow_puzzle() {
+  shine_puzzle() {
     this.pieces.postFX.addShine(0.55, 0.5, 7);
-    if (this.background) { this.background.postFX.addShine(0.55, 0.5, 7); }
+    this.pieces.postFX.addShine(0.85, 0.7, 9);
+    this.pieces.postFX.addShine(0.95, 1.1, 6);
+    if (this.background) { this.background.postFX.addShine(0.65, 0.7, 8); }
+    if (this.background) { this.background.postFX.addShine(0.95, 0.8, 10); }
+    if (this.background) { this.background.postFX.addShine(1.05, 1.1, 9); }
+  }  
+
+  remove_glow() {
+    this.pieces.clearFX();
+  }
+
+  glow_puzzle() {
     let glow = this.pieces.postFX.addGlow("0xffffAA",5,0);
     this.tweens.add({
         targets: glow,
