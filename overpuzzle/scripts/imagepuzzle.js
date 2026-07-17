@@ -40,6 +40,7 @@ class Imagepuzzle extends Phaser.Scene {
       table_yoffset: 0,
       win_glow_pieces: true,
       win_shine_image: true,
+      shadow_pieces: true,
       answers: null, // Hmmm ...
       answer_hash: null, 
       solve_ids: null, // Solve ids are a non-unique designator for puzzles where pieces are interchangeable. Or match in matching games.

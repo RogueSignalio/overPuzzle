@@ -20,7 +20,7 @@ class Rotatepuzzle extends Imagepuzzle {
 
   start_puzzle (rows, columns) {
     this.slice_puzzle(rows,columns)
-    this.pieces.postFX.addGlow("0x000000",5,0)
+    if (this.config.shadow_pieces) this.pieces.postFX.addGlow("0x000000",5,0)
     this.open_piece = this.pieces.getAt(this.pieces.length - 1);
     for (let x = 0; x < this.config.rows; x++) {
       for (let y = 0; y < this.config.columns; y++) {
